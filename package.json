@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "antlr4ts": "antlr4ts -visitor grammar.g4",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Christopher Hansen and Ansh Godha",
