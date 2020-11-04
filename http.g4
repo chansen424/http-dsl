@@ -2,7 +2,7 @@ grammar http;
 
 expression: request | value;
 
-statement: assgn | print;
+statement: assign | print;
 
 LPAREN: '(';
 RPAREN: ')';
@@ -18,7 +18,8 @@ POST: 'POST';
 TO: 'to';
 FROM: 'from';
 
-assgn: LET NAME EQUALS expression;
+assign: LET NAME EQUALS expression;
+
 print: PRINT LPAREN expression RPAREN;
 
 request: GET FROM STRING | POST json TO STRING;
@@ -29,7 +30,8 @@ pair: key COLON value;
 
 NAME: [a-zA-Z][a-zA-Z]*;
 
-key: NAME;
+// To be JSON parsable, keys require double quotes around them
+key: STRING;
 
 var: NAME;
 

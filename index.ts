@@ -3,7 +3,7 @@ import { TerminalNode } from "antlr4ts/tree/TerminalNode";
 import * as lexer from "./generated/httpLexer";
 import * as parser from "./generated/httpParser";
 
-let code = 'print({ age : 5, type : "a" })';
+let code = 'print({ "age" : 5, "type" : "a" })';
 let inputStream = CharStreams.fromString(code);
 let l = new lexer.httpLexer(inputStream);
 let tokenStream = new CommonTokenStream(l);
@@ -36,7 +36,6 @@ function evaluateValue(t: parser.ValueContext): ExpressionValue {
   } else if (isNumeric(content)) {
     return parseFloat(content);
   } else if (t.json()) {
-    console.log(t.json()!.text);
     return JSON.parse(t.json()!.text);
   } else {
     return content;
