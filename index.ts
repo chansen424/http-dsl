@@ -1,7 +1,7 @@
 import { CharStreams, CommonTokenStream } from "antlr4ts";
 import { TerminalNode } from "antlr4ts/tree/TerminalNode";
-import * as lexer from "./httpLexer";
-import * as parser from "./httpParser";
+import * as lexer from "./generated/httpLexer";
+import * as parser from "./generated/httpParser";
 
 let code = 'print({ age : 5, type : "a" })';
 let inputStream = CharStreams.fromString(code);
