@@ -1,5 +1,7 @@
 node_modules
-http.interp
-http.tokens
-httpLexer.interp
-httpLexer.tokens
+*.interp
+*.tokens
+httpLexer.ts
+httpListener.ts
+httpParser.ts
+httpVisitor.ts
