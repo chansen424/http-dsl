@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "antlr4ts": "antlr4ts -visitor http.g4",
+    "compile": "antlr4ts -visitor http.g4",
     "test": "echo \"Error: no test specified\" && exit 1",
     "live": "nodemon --exec ./node_modules/.bin/ts-node -- ./index.ts"
   },
@@ -13,7 +13,8 @@
   "dependencies": {
     "antlr4ts": "^0.5.0-alpha.3",
     "nodemon": "^2.0.6",
-    "ts-node": "^9.0.0"
+    "ts-node": "^9.0.0",
+    "typescript": "^3.4.3"
   },
   "devDependencies": {
     "antlr4ts-cli": "^0.5.0-alpha.3"

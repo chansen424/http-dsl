@@ -1,26 +1,39 @@
 grammar http;
 
-expression: request | VALUE;
+expression: request | value;
 
 statement: assgn | print;
 
-assgn: 'let' NAME '=' expression;
+LPAREN: '(';
+RPAREN: ')';
+LBRACE: '{';
+RBRACE: '}';
+COLON: ':';
+COMMA: ',';
+EQUALS: '=';
+LET: 'let';
+PRINT: 'print';
+GET: 'GET';
+POST: 'POST';
+TO: 'to';
+FROM: 'from';
 
-print: 'print' '(' expression ')';
+assgn: LET NAME EQUALS expression;
+print: PRINT LPAREN expression RPAREN;
 
-request: 'GET' 'from' STRING | 'POST' JSON 'to' STRING;
+request: GET FROM STRING | POST json TO STRING;
 
-JSON: '{' '}' | '{' PAIR (',' PAIR)* '}';
+json: LBRACE RBRACE | LBRACE pair (COMMA pair)* RBRACE;
 
-PAIR: KEY ':' VALUE;
+pair: key COLON value;
 
 NAME: [a-zA-Z][a-zA-Z]*;
 
-KEY: NAME;
+key: NAME;
 
-VAR: NAME;
+var: NAME;
 
-VALUE: INT | STRING | JSON;
+value: INT | STRING | json;
 
 INT: [0-9][0-9]*;
 

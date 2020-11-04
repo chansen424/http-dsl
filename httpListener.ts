@@ -8,6 +8,11 @@ import { StatementContext } from "./httpParser";
 import { AssgnContext } from "./httpParser";
 import { PrintContext } from "./httpParser";
 import { RequestContext } from "./httpParser";
+import { JsonContext } from "./httpParser";
+import { PairContext } from "./httpParser";
+import { KeyContext } from "./httpParser";
+import { VarContext } from "./httpParser";
+import { ValueContext } from "./httpParser";
 
 
 /**
@@ -69,5 +74,60 @@ export interface httpListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitRequest?: (ctx: RequestContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `httpParser.json`.
+	 * @param ctx the parse tree
+	 */
+	enterJson?: (ctx: JsonContext) => void;
+	/**
+	 * Exit a parse tree produced by `httpParser.json`.
+	 * @param ctx the parse tree
+	 */
+	exitJson?: (ctx: JsonContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `httpParser.pair`.
+	 * @param ctx the parse tree
+	 */
+	enterPair?: (ctx: PairContext) => void;
+	/**
+	 * Exit a parse tree produced by `httpParser.pair`.
+	 * @param ctx the parse tree
+	 */
+	exitPair?: (ctx: PairContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `httpParser.key`.
+	 * @param ctx the parse tree
+	 */
+	enterKey?: (ctx: KeyContext) => void;
+	/**
+	 * Exit a parse tree produced by `httpParser.key`.
+	 * @param ctx the parse tree
+	 */
+	exitKey?: (ctx: KeyContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `httpParser.var`.
+	 * @param ctx the parse tree
+	 */
+	enterVar?: (ctx: VarContext) => void;
+	/**
+	 * Exit a parse tree produced by `httpParser.var`.
+	 * @param ctx the parse tree
+	 */
+	exitVar?: (ctx: VarContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `httpParser.value`.
+	 * @param ctx the parse tree
+	 */
+	enterValue?: (ctx: ValueContext) => void;
+	/**
+	 * Exit a parse tree produced by `httpParser.value`.
+	 * @param ctx the parse tree
+	 */
+	exitValue?: (ctx: ValueContext) => void;
 }
 

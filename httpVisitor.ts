@@ -8,6 +8,11 @@ import { StatementContext } from "./httpParser";
 import { AssgnContext } from "./httpParser";
 import { PrintContext } from "./httpParser";
 import { RequestContext } from "./httpParser";
+import { JsonContext } from "./httpParser";
+import { PairContext } from "./httpParser";
+import { KeyContext } from "./httpParser";
+import { VarContext } from "./httpParser";
+import { ValueContext } from "./httpParser";
 
 
 /**
@@ -52,5 +57,40 @@ export interface httpVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitRequest?: (ctx: RequestContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `httpParser.json`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitJson?: (ctx: JsonContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `httpParser.pair`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitPair?: (ctx: PairContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `httpParser.key`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitKey?: (ctx: KeyContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `httpParser.var`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitVar?: (ctx: VarContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `httpParser.value`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitValue?: (ctx: ValueContext) => Result;
 }
 
