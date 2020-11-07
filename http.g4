@@ -44,3 +44,5 @@ STRING: '"' ~('"')* '"';
 
 // For ignoring whitespace
 WS: [ \t\u000C\r\n]+ -> skip;
+
+LINE_COMMENT : '//' ~[\r\n]* '\r'? '\n' -> skip;
