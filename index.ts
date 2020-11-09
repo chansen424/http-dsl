@@ -1,10 +1,10 @@
 import { CharStreams, CommonTokenStream } from "antlr4ts";
-import fetch from 'node-fetch';
+import fetch from "node-fetch";
 import * as lexer from "./generated/httpLexer";
 import * as parser from "./generated/httpParser";
 
-let code = 'print({ "age" : 5, "type" : "a" })';
-// let code = '//hello\r\nGET from "https://aws.random.cat/meow?ref=apilist.fun"';
+// let code = 'print({ "age" : 5, "type" : "a" })';
+let code = 'print(GET from "https://aws.random.cat/meow?ref=apilist.fun")';
 
 let inputStream = CharStreams.fromString(code);
 let l = new lexer.httpLexer(inputStream);
@@ -24,15 +24,17 @@ function removeQuotes(s: string): string {
   return s.substr(1, s.length - 2);
 }
 
-async function getRequest(s: string): Promise<Object> {
+function getRequest(s: string): Promise<Object> {
   const url = new URL(removeQuotes(s));
-  return fetch(url).then(res => res.json());
+  return fetch(url).then((res) => res.json());
 }
 
 /* Need to change this somehow so that everything that gets printed
    doesn't wrap itself in Promise { }.
 */
-async function evaluateExpression(e: parser.ExpressionContext): Promise<ExpressionValue> {
+async function evaluateExpression(
+  e: parser.ExpressionContext
+): Promise<ExpressionValue> {
   if (e.request()) {
     if (e.request()!.GET()) {
       return await getRequest(e.request()!.STRING().text);
@@ -62,6 +64,6 @@ function evaluateValue(t: parser.ValueContext): ExpressionValue {
 function evaluateStatement(s: parser.StatementContext) {
   if (s.print()) {
     const v = evaluateExpression(s.print()!.expression());
-    console.log(v);
+    Promise.resolve(v).then((val) => console.log(val));
   }
 }

@@ -18,14 +18,14 @@ public class httpParser extends Parser {
 	public static final int
 		LPAREN=1, RPAREN=2, LBRACE=3, RBRACE=4, COLON=5, COMMA=6, EQUALS=7, LET=8, 
 		PRINT=9, GET=10, POST=11, TO=12, FROM=13, NAME=14, INT=15, STRING=16, 
-		WS=17;
+		WS=17, LINE_COMMENT=18;
 	public static final int
-		RULE_expression = 0, RULE_statement = 1, RULE_assgn = 2, RULE_print = 3, 
+		RULE_expression = 0, RULE_statement = 1, RULE_assign = 2, RULE_print = 3, 
 		RULE_request = 4, RULE_json = 5, RULE_pair = 6, RULE_key = 7, RULE_var = 8, 
 		RULE_value = 9;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"expression", "statement", "assgn", "print", "request", "json", "pair", 
+			"expression", "statement", "assign", "print", "request", "json", "pair", 
 			"key", "var", "value"
 		};
 	}
@@ -42,7 +42,7 @@ public class httpParser extends Parser {
 		return new String[] {
 			null, "LPAREN", "RPAREN", "LBRACE", "RBRACE", "COLON", "COMMA", "EQUALS", 
 			"LET", "PRINT", "GET", "POST", "TO", "FROM", "NAME", "INT", "STRING", 
-			"WS"
+			"WS", "LINE_COMMENT"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -149,8 +149,8 @@ public class httpParser extends Parser {
 	}
 
 	public static class StatementContext extends ParserRuleContext {
-		public AssgnContext assgn() {
-			return getRuleContext(AssgnContext.class,0);
+		public AssignContext assign() {
+			return getRuleContext(AssignContext.class,0);
 		}
 		public PrintContext print() {
 			return getRuleContext(PrintContext.class,0);
@@ -172,7 +172,7 @@ public class httpParser extends Parser {
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(24);
-				assgn();
+				assign();
 				}
 				break;
 			case PRINT:
@@ -197,22 +197,22 @@ public class httpParser extends Parser {
 		return _localctx;
 	}
 
-	public static class AssgnContext extends ParserRuleContext {
+	public static class AssignContext extends ParserRuleContext {
 		public TerminalNode LET() { return getToken(httpParser.LET, 0); }
 		public TerminalNode NAME() { return getToken(httpParser.NAME, 0); }
 		public TerminalNode EQUALS() { return getToken(httpParser.EQUALS, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
-		public AssgnContext(ParserRuleContext parent, int invokingState) {
+		public AssignContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_assgn; }
+		@Override public int getRuleIndex() { return RULE_assign; }
 	}
 
-	public final AssgnContext assgn() throws RecognitionException {
-		AssgnContext _localctx = new AssgnContext(_ctx, getState());
-		enterRule(_localctx, 4, RULE_assgn);
+	public final AssignContext assign() throws RecognitionException {
+		AssignContext _localctx = new AssignContext(_ctx, getState());
+		enterRule(_localctx, 4, RULE_assign);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -454,7 +454,7 @@ public class httpParser extends Parser {
 	}
 
 	public static class KeyContext extends ParserRuleContext {
-		public TerminalNode NAME() { return getToken(httpParser.NAME, 0); }
+		public TerminalNode STRING() { return getToken(httpParser.STRING, 0); }
 		public KeyContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -468,7 +468,7 @@ public class httpParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(67);
-			match(NAME);
+			match(STRING);
 			}
 		}
 		catch (RecognitionException re) {
@@ -567,7 +567,7 @@ public class httpParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\23O\4\2\t\2\4\3\t"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\24O\4\2\t\2\4\3\t"+
 		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\3"+
 		"\2\3\2\5\2\31\n\2\3\3\3\3\5\3\35\n\3\3\4\3\4\3\4\3\4\3\4\3\5\3\5\3\5\3"+
 		"\5\3\5\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\5\6\61\n\6\3\7\3\7\3\7\3\7\3\7"+
@@ -583,7 +583,7 @@ public class httpParser extends Parser {
 		"+\3\2\2\2\61\13\3\2\2\2\62\63\7\5\2\2\63@\7\6\2\2\64\65\7\5\2\2\65:\5"+
 		"\16\b\2\66\67\7\b\2\2\679\5\16\b\28\66\3\2\2\29<\3\2\2\2:8\3\2\2\2:;\3"+
 		"\2\2\2;=\3\2\2\2<:\3\2\2\2=>\7\6\2\2>@\3\2\2\2?\62\3\2\2\2?\64\3\2\2\2"+
-		"@\r\3\2\2\2AB\5\20\t\2BC\7\7\2\2CD\5\24\13\2D\17\3\2\2\2EF\7\20\2\2F\21"+
+		"@\r\3\2\2\2AB\5\20\t\2BC\7\7\2\2CD\5\24\13\2D\17\3\2\2\2EF\7\22\2\2F\21"+
 		"\3\2\2\2GH\7\20\2\2H\23\3\2\2\2IM\7\21\2\2JM\7\22\2\2KM\5\f\7\2LI\3\2"+
 		"\2\2LJ\3\2\2\2LK\3\2\2\2M\25\3\2\2\2\b\30\34\60:?L";
 	public static final ATN _ATN =
