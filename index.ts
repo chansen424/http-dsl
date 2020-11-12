@@ -2,6 +2,10 @@ import { readFile } from "fs";
 import interpret from "./interpreter";
 
 const interpretFile = (file: string): void => {
+  if (!file.endsWith(".http")) {
+    console.log("File must have extension .http");
+    process.exit(2);
+  }
   readFile(file, {}, (error, data) => {
     if (error != null) {
       console.error(`Unable to read ${file}. Reason:`);
