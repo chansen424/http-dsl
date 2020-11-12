@@ -4,6 +4,16 @@
 
 Ansh Godha, Christopher Hansen
 
+## Setup
+
+1. Make sure you have Java, node.js, and npm installed on your computer.
+2. Use `npm i` to install dependencies.
+3. Use `npm run generate` to generate a lexer and parser from the http.g4 grammar.
+
+## Running the HTTP Interpreter
+
+Use `npm run live` to run the interpreter.
+
 ## Resources
 
 * [ANTLR Sample](https://github.com/fwouts/sample-antlr4-typescript?ref=hackernoon.com)
