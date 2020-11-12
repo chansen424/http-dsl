@@ -1,0 +1,1 @@
+print({"name": "Chris", "Education": {"college": "Cornell", "degree": "Computer Science"}})

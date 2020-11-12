@@ -1,0 +1,1 @@
+print(GET from "https://aws.random.cat/meow?ref=apilist.fun")

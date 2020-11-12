@@ -1,8 +1,8 @@
 grammar http;
 
-expression: request | value;
+expression: request | value | assign | print;
 
-statement: assign | print;
+// statement: assign | print;
 
 LPAREN: '(';
 RPAREN: ')';
@@ -45,4 +45,4 @@ STRING: '"' ~('"')* '"';
 // For ignoring whitespace
 WS: [ \t\u000C\r\n]+ -> skip;
 
-LINE_COMMENT : '//' ~[\r\n]* '\r'? '\n' -> skip;
+LINE_COMMENT: '//' ~[\r\n]* '\r'? '\n' -> skip;

@@ -20,13 +20,12 @@ public class httpParser extends Parser {
 		PRINT=9, GET=10, POST=11, TO=12, FROM=13, NAME=14, INT=15, STRING=16, 
 		WS=17, LINE_COMMENT=18;
 	public static final int
-		RULE_expression = 0, RULE_statement = 1, RULE_assign = 2, RULE_print = 3, 
-		RULE_request = 4, RULE_json = 5, RULE_pair = 6, RULE_key = 7, RULE_var = 8, 
-		RULE_value = 9;
+		RULE_expression = 0, RULE_assign = 1, RULE_print = 2, RULE_request = 3, 
+		RULE_json = 4, RULE_pair = 5, RULE_key = 6, RULE_var = 7, RULE_value = 8;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"expression", "statement", "assign", "print", "request", "json", "pair", 
-			"key", "var", "value"
+			"expression", "assign", "print", "request", "json", "pair", "key", "var", 
+			"value"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
@@ -103,6 +102,12 @@ public class httpParser extends Parser {
 		public ValueContext value() {
 			return getRuleContext(ValueContext.class,0);
 		}
+		public AssignContext assign() {
+			return getRuleContext(AssignContext.class,0);
+		}
+		public PrintContext print() {
+			return getRuleContext(PrintContext.class,0);
+		}
 		public ExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -120,7 +125,7 @@ public class httpParser extends Parser {
 			case POST:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(20);
+				setState(18);
 				request();
 				}
 				break;
@@ -129,56 +134,21 @@ public class httpParser extends Parser {
 			case STRING:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(21);
+				setState(19);
 				value();
 				}
 				break;
-			default:
-				throw new NoViableAltException(this);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	public static class StatementContext extends ParserRuleContext {
-		public AssignContext assign() {
-			return getRuleContext(AssignContext.class,0);
-		}
-		public PrintContext print() {
-			return getRuleContext(PrintContext.class,0);
-		}
-		public StatementContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_statement; }
-	}
-
-	public final StatementContext statement() throws RecognitionException {
-		StatementContext _localctx = new StatementContext(_ctx, getState());
-		enterRule(_localctx, 2, RULE_statement);
-		try {
-			setState(26);
-			_errHandler.sync(this);
-			switch (_input.LA(1)) {
 			case LET:
-				enterOuterAlt(_localctx, 1);
+				enterOuterAlt(_localctx, 3);
 				{
-				setState(24);
+				setState(20);
 				assign();
 				}
 				break;
 			case PRINT:
-				enterOuterAlt(_localctx, 2);
+				enterOuterAlt(_localctx, 4);
 				{
-				setState(25);
+				setState(21);
 				print();
 				}
 				break;
@@ -212,17 +182,17 @@ public class httpParser extends Parser {
 
 	public final AssignContext assign() throws RecognitionException {
 		AssignContext _localctx = new AssignContext(_ctx, getState());
-		enterRule(_localctx, 4, RULE_assign);
+		enterRule(_localctx, 2, RULE_assign);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(28);
+			setState(24);
 			match(LET);
-			setState(29);
+			setState(25);
 			match(NAME);
-			setState(30);
+			setState(26);
 			match(EQUALS);
-			setState(31);
+			setState(27);
 			expression();
 			}
 		}
@@ -252,17 +222,17 @@ public class httpParser extends Parser {
 
 	public final PrintContext print() throws RecognitionException {
 		PrintContext _localctx = new PrintContext(_ctx, getState());
-		enterRule(_localctx, 6, RULE_print);
+		enterRule(_localctx, 4, RULE_print);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(33);
+			setState(29);
 			match(PRINT);
-			setState(34);
+			setState(30);
 			match(LPAREN);
-			setState(35);
+			setState(31);
 			expression();
-			setState(36);
+			setState(32);
 			match(RPAREN);
 			}
 		}
@@ -294,32 +264,32 @@ public class httpParser extends Parser {
 
 	public final RequestContext request() throws RecognitionException {
 		RequestContext _localctx = new RequestContext(_ctx, getState());
-		enterRule(_localctx, 8, RULE_request);
+		enterRule(_localctx, 6, RULE_request);
 		try {
-			setState(46);
+			setState(42);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case GET:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(38);
+				setState(34);
 				match(GET);
-				setState(39);
+				setState(35);
 				match(FROM);
-				setState(40);
+				setState(36);
 				match(STRING);
 				}
 				break;
 			case POST:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(41);
+				setState(37);
 				match(POST);
-				setState(42);
+				setState(38);
 				json();
-				setState(43);
+				setState(39);
 				match(TO);
-				setState(44);
+				setState(40);
 				match(STRING);
 				}
 				break;
@@ -359,45 +329,45 @@ public class httpParser extends Parser {
 
 	public final JsonContext json() throws RecognitionException {
 		JsonContext _localctx = new JsonContext(_ctx, getState());
-		enterRule(_localctx, 10, RULE_json);
+		enterRule(_localctx, 8, RULE_json);
 		int _la;
 		try {
-			setState(61);
+			setState(57);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,4,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,3,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(48);
+				setState(44);
 				match(LBRACE);
-				setState(49);
+				setState(45);
 				match(RBRACE);
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(50);
+				setState(46);
 				match(LBRACE);
-				setState(51);
+				setState(47);
 				pair();
-				setState(56);
+				setState(52);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==COMMA) {
 					{
 					{
-					setState(52);
+					setState(48);
 					match(COMMA);
-					setState(53);
+					setState(49);
 					pair();
 					}
 					}
-					setState(58);
+					setState(54);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(59);
+				setState(55);
 				match(RBRACE);
 				}
 				break;
@@ -430,15 +400,15 @@ public class httpParser extends Parser {
 
 	public final PairContext pair() throws RecognitionException {
 		PairContext _localctx = new PairContext(_ctx, getState());
-		enterRule(_localctx, 12, RULE_pair);
+		enterRule(_localctx, 10, RULE_pair);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(63);
+			setState(59);
 			key();
-			setState(64);
+			setState(60);
 			match(COLON);
-			setState(65);
+			setState(61);
 			value();
 			}
 		}
@@ -463,11 +433,11 @@ public class httpParser extends Parser {
 
 	public final KeyContext key() throws RecognitionException {
 		KeyContext _localctx = new KeyContext(_ctx, getState());
-		enterRule(_localctx, 14, RULE_key);
+		enterRule(_localctx, 12, RULE_key);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(67);
+			setState(63);
 			match(STRING);
 			}
 		}
@@ -492,11 +462,11 @@ public class httpParser extends Parser {
 
 	public final VarContext var() throws RecognitionException {
 		VarContext _localctx = new VarContext(_ctx, getState());
-		enterRule(_localctx, 16, RULE_var);
+		enterRule(_localctx, 14, RULE_var);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(69);
+			setState(65);
 			match(NAME);
 			}
 		}
@@ -525,29 +495,29 @@ public class httpParser extends Parser {
 
 	public final ValueContext value() throws RecognitionException {
 		ValueContext _localctx = new ValueContext(_ctx, getState());
-		enterRule(_localctx, 18, RULE_value);
+		enterRule(_localctx, 16, RULE_value);
 		try {
-			setState(74);
+			setState(70);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case INT:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(71);
+				setState(67);
 				match(INT);
 				}
 				break;
 			case STRING:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(72);
+				setState(68);
 				match(STRING);
 				}
 				break;
 			case LBRACE:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(73);
+				setState(69);
 				json();
 				}
 				break;
@@ -567,25 +537,25 @@ public class httpParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\24O\4\2\t\2\4\3\t"+
-		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\3"+
-		"\2\3\2\5\2\31\n\2\3\3\3\3\5\3\35\n\3\3\4\3\4\3\4\3\4\3\4\3\5\3\5\3\5\3"+
-		"\5\3\5\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\5\6\61\n\6\3\7\3\7\3\7\3\7\3\7"+
-		"\3\7\7\79\n\7\f\7\16\7<\13\7\3\7\3\7\5\7@\n\7\3\b\3\b\3\b\3\b\3\t\3\t"+
-		"\3\n\3\n\3\13\3\13\3\13\5\13M\n\13\3\13\2\2\f\2\4\6\b\n\f\16\20\22\24"+
-		"\2\2\2K\2\30\3\2\2\2\4\34\3\2\2\2\6\36\3\2\2\2\b#\3\2\2\2\n\60\3\2\2\2"+
-		"\f?\3\2\2\2\16A\3\2\2\2\20E\3\2\2\2\22G\3\2\2\2\24L\3\2\2\2\26\31\5\n"+
-		"\6\2\27\31\5\24\13\2\30\26\3\2\2\2\30\27\3\2\2\2\31\3\3\2\2\2\32\35\5"+
-		"\6\4\2\33\35\5\b\5\2\34\32\3\2\2\2\34\33\3\2\2\2\35\5\3\2\2\2\36\37\7"+
-		"\n\2\2\37 \7\20\2\2 !\7\t\2\2!\"\5\2\2\2\"\7\3\2\2\2#$\7\13\2\2$%\7\3"+
-		"\2\2%&\5\2\2\2&\'\7\4\2\2\'\t\3\2\2\2()\7\f\2\2)*\7\17\2\2*\61\7\22\2"+
-		"\2+,\7\r\2\2,-\5\f\7\2-.\7\16\2\2./\7\22\2\2/\61\3\2\2\2\60(\3\2\2\2\60"+
-		"+\3\2\2\2\61\13\3\2\2\2\62\63\7\5\2\2\63@\7\6\2\2\64\65\7\5\2\2\65:\5"+
-		"\16\b\2\66\67\7\b\2\2\679\5\16\b\28\66\3\2\2\29<\3\2\2\2:8\3\2\2\2:;\3"+
-		"\2\2\2;=\3\2\2\2<:\3\2\2\2=>\7\6\2\2>@\3\2\2\2?\62\3\2\2\2?\64\3\2\2\2"+
-		"@\r\3\2\2\2AB\5\20\t\2BC\7\7\2\2CD\5\24\13\2D\17\3\2\2\2EF\7\22\2\2F\21"+
-		"\3\2\2\2GH\7\20\2\2H\23\3\2\2\2IM\7\21\2\2JM\7\22\2\2KM\5\f\7\2LI\3\2"+
-		"\2\2LJ\3\2\2\2LK\3\2\2\2M\25\3\2\2\2\b\30\34\60:?L";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\24K\4\2\t\2\4\3\t"+
+		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\3\2\3\2\3\2"+
+		"\3\2\5\2\31\n\2\3\3\3\3\3\3\3\3\3\3\3\4\3\4\3\4\3\4\3\4\3\5\3\5\3\5\3"+
+		"\5\3\5\3\5\3\5\3\5\5\5-\n\5\3\6\3\6\3\6\3\6\3\6\3\6\7\6\65\n\6\f\6\16"+
+		"\68\13\6\3\6\3\6\5\6<\n\6\3\7\3\7\3\7\3\7\3\b\3\b\3\t\3\t\3\n\3\n\3\n"+
+		"\5\nI\n\n\3\n\2\2\13\2\4\6\b\n\f\16\20\22\2\2\2I\2\30\3\2\2\2\4\32\3\2"+
+		"\2\2\6\37\3\2\2\2\b,\3\2\2\2\n;\3\2\2\2\f=\3\2\2\2\16A\3\2\2\2\20C\3\2"+
+		"\2\2\22H\3\2\2\2\24\31\5\b\5\2\25\31\5\22\n\2\26\31\5\4\3\2\27\31\5\6"+
+		"\4\2\30\24\3\2\2\2\30\25\3\2\2\2\30\26\3\2\2\2\30\27\3\2\2\2\31\3\3\2"+
+		"\2\2\32\33\7\n\2\2\33\34\7\20\2\2\34\35\7\t\2\2\35\36\5\2\2\2\36\5\3\2"+
+		"\2\2\37 \7\13\2\2 !\7\3\2\2!\"\5\2\2\2\"#\7\4\2\2#\7\3\2\2\2$%\7\f\2\2"+
+		"%&\7\17\2\2&-\7\22\2\2\'(\7\r\2\2()\5\n\6\2)*\7\16\2\2*+\7\22\2\2+-\3"+
+		"\2\2\2,$\3\2\2\2,\'\3\2\2\2-\t\3\2\2\2./\7\5\2\2/<\7\6\2\2\60\61\7\5\2"+
+		"\2\61\66\5\f\7\2\62\63\7\b\2\2\63\65\5\f\7\2\64\62\3\2\2\2\658\3\2\2\2"+
+		"\66\64\3\2\2\2\66\67\3\2\2\2\679\3\2\2\28\66\3\2\2\29:\7\6\2\2:<\3\2\2"+
+		"\2;.\3\2\2\2;\60\3\2\2\2<\13\3\2\2\2=>\5\16\b\2>?\7\7\2\2?@\5\22\n\2@"+
+		"\r\3\2\2\2AB\7\22\2\2B\17\3\2\2\2CD\7\20\2\2D\21\3\2\2\2EI\7\21\2\2FI"+
+		"\7\22\2\2GI\5\n\6\2HE\3\2\2\2HF\3\2\2\2HG\3\2\2\2I\23\3\2\2\2\7\30,\66"+
+		";H";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
