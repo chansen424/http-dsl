@@ -12,7 +12,7 @@ Ansh Godha, Christopher Hansen
 
 ## Running the HTTP Interpreter
 
-Use `npm run live` to run the interpreter.
+Use `npm run live [file]` to run the interpreter on a particular file. **Example:** `npm run live examples/get.http`
 
 ## Resources
 
