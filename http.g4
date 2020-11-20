@@ -1,6 +1,12 @@
 grammar http;
 
-expression: request | value | assign | print;
+expression:
+	<assoc = left> expression SEMICOLON expression
+	| assign
+	| print
+	| value
+	| request;
+// | expression SEMICOLON expression;
 
 // statement: assign | print;
 
@@ -9,6 +15,7 @@ RPAREN: ')';
 LBRACE: '{';
 RBRACE: '}';
 COLON: ':';
+SEMICOLON: ';';
 COMMA: ',';
 EQUALS: '=';
 LET: 'let';
@@ -18,7 +25,7 @@ POST: 'POST';
 TO: 'to';
 FROM: 'from';
 
-assign: LET NAME EQUALS expression;
+assign: LET var EQUALS expression;
 
 print: PRINT LPAREN expression RPAREN;
 
@@ -35,7 +42,7 @@ key: STRING;
 
 var: NAME;
 
-value: INT | STRING | json;
+value: INT | STRING | json | var;
 
 INT: [0-9][0-9]*;
 

@@ -25,26 +25,51 @@ function getRequest(s: string): Promise<Object> {
    doesn't wrap itself in Promise { }.
 */
 async function evaluateExpression(
-  e: parser.ExpressionContext
+  e: parser.ExpressionContext,
+  context: any = {}
 ): Promise<ExpressionValue> {
+  console.log(e.text)
   if (e.request()) {
     if (e.request()!.GET()) {
       return await getRequest(e.request()!.STRING().text);
     }
     return null;
   } else if (e.value()) {
-    return evaluateValue(e.value()!);
+    return evaluateValue(e.value()!, context);
   } else if (e.print()) {
     const v = evaluateExpression(e.print()!.expression());
     Promise.resolve(v).then((val) => console.log(val));
     return null;
+  } else if (e.assign()) {
+    const v = evaluateExpression(e.assign()!.expression())
+    console.log(e.assign()!.expression().text)
+    await Promise.resolve(v).then((val) => {
+      console.log(val)
+      context[e.assign()!.var().text] = val
+    })
+    return null
+  } else if (e.expression()) {
+    const v1 = evaluateExpression(e.expression()[0])
+    let v2_promise;
+    let result = null;
+    await Promise.resolve(v1).then(() => v2_promise = evaluateExpression(e.expression()[1]))
+    console.log(context)
+    await Promise.resolve(v2_promise).then(v2 => result = v2);
+    return result
   } else {
     let stringExpression = e.text;
     return removeQuotes(stringExpression);
   }
 }
 
-function evaluateValue(t: parser.ValueContext): ExpressionValue {
+function evaluateValue(t: parser.ValueContext, context: any): ExpressionValue {
+  if (t.var()) {
+    if (context[t.var()!.text]) {
+      return context[t.var()!.text]
+    } else {
+      throw new Error("Undefined variable")
+    }
+  }
   const content = t.text;
   if (!content) {
     return null;
