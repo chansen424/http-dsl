@@ -1,14 +1,11 @@
 grammar http;
 
 expression:
-	<assoc = left> expression SEMICOLON expression
-	| assign
-	| print
+	assign
 	| value
-	| request;
-// | expression SEMICOLON expression;
-
-// statement: assign | print;
+	| request
+	| print
+	| <assoc = right> expression SEMICOLON expression;
 
 LPAREN: '(';
 RPAREN: ')';

@@ -37,23 +37,30 @@ async function evaluateExpression(
   } else if (e.value()) {
     return evaluateValue(e.value()!, context);
   } else if (e.print()) {
-    const v = evaluateExpression(e.print()!.expression());
+    const v = evaluateExpression(e.print()!.expression(), context);
     Promise.resolve(v).then((val) => console.log(val));
     return null;
   } else if (e.assign()) {
-    const v = evaluateExpression(e.assign()!.expression())
-    console.log(e.assign()!.expression().text)
-    await Promise.resolve(v).then((val) => {
-      // console.log(val)
-      context[e.assign()!.var().text] = val
-    })
-    return null
+    const assignedExpression = e.assign()!.expression().expression();
+    // checking for sequences to make sure that we only ever assign the first
+    // element of a sequence to the let expression's variable
+    const isSequence = 1 in assignedExpression;
+    const toEvaluate = isSequence ? e.assign()!.expression().expression()[0] : e.assign()!.expression();
+    const v = evaluateExpression(toEvaluate, context);
+    // console.log(e.assign()!.expression().text)
+    const newContext = await Promise.resolve(v).then((val) => {
+      context[e.assign()!.var().text] = val;
+      return context;
+    });
+    if (isSequence) {
+      evaluateExpression(e.assign()!.expression().expression()[1], newContext);
+    }
+    return null;
   } else if (e.expression()) {
-    const v1 = evaluateExpression(e.expression()[0])
+    const v1 = evaluateExpression(e.expression()[0], context)
     let v2_promise;
     let result = null;
-    await Promise.resolve(v1).then(() => v2_promise = evaluateExpression(e.expression()[1]))
-    // console.log(context)
+    await Promise.resolve(v1).then(() => v2_promise = evaluateExpression(e.expression()[1], context))
     await Promise.resolve(v2_promise).then(v2 => result = v2);
     return result
   } else {
@@ -63,6 +70,7 @@ async function evaluateExpression(
 }
 
 function evaluateValue(t: parser.ValueContext, context: any): ExpressionValue {
+  // console.log(context)
   if (t.var()) {
     if (context[t.var()!.text]) {
       return context[t.var()!.text]
