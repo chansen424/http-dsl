@@ -28,7 +28,7 @@ async function evaluateExpression(
   e: parser.ExpressionContext,
   context: any = {}
 ): Promise<ExpressionValue> {
-  console.log(e.text)
+  // console.log(e.text)
   if (e.request()) {
     if (e.request()!.GET()) {
       return await getRequest(e.request()!.STRING().text);
@@ -44,7 +44,7 @@ async function evaluateExpression(
     const v = evaluateExpression(e.assign()!.expression())
     console.log(e.assign()!.expression().text)
     await Promise.resolve(v).then((val) => {
-      console.log(val)
+      // console.log(val)
       context[e.assign()!.var().text] = val
     })
     return null
@@ -53,7 +53,7 @@ async function evaluateExpression(
     let v2_promise;
     let result = null;
     await Promise.resolve(v1).then(() => v2_promise = evaluateExpression(e.expression()[1]))
-    console.log(context)
+    // console.log(context)
     await Promise.resolve(v2_promise).then(v2 => result = v2);
     return result
   } else {
