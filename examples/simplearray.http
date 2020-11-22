@@ -1,2 +1,4 @@
-let a = ["a", "b", {"name": "Ansh"}];
+let elem = 5;
+let ansh = "Ansh";
+let a = ["a", "b", elem, {"name": ansh}];
 print(a)
