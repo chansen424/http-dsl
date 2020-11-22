@@ -3,10 +3,8 @@ import fetch from "node-fetch";
 import * as lexer from "./generated/httpLexer";
 import * as parser from "./generated/httpParser";
 
-// let code = 'print({ "age" : 5, "type" : "a" })';
-// let code = 'print(GET from "https://aws.random.cat/meow?ref=apilist.fun")';
 
-type ExpressionValue = number | string | Object | null;
+type Value = number | string | Object | null;
 
 function isNumeric(s: string): boolean {
   return !isNaN(parseFloat(s));
@@ -21,30 +19,45 @@ function getRequest(s: string): Promise<Object> {
   return fetch(url).then((res) => res.json());
 }
 
-/* Need to change this somehow so that everything that gets printed
-   doesn't wrap itself in Promise { }.
-*/
+async function evaluateCommand(
+  c: parser.CommandContext,
+  context: any = {}
+): Promise<void> {
+  if (c.assign()) {
+    const value = evaluateExpression(c.assign()!.expression(), context);
+    await Promise.resolve(value).then(v => context[c.assign()!.var().text] = v);
+  } else if (c.print()) {
+    const value = evaluateExpression(c.print()!.expression(), context);
+    await Promise.resolve(value).then(v => console.log(v));
+  } else {
+    evaluateCommand(c.command()[0], context)
+      .then(() => evaluateCommand(c.command()[1], context));
+  }
+}
+
 async function evaluateExpression(
-  e: parser.ExpressionContext
-): Promise<ExpressionValue> {
+  e: parser.ExpressionContext,
+  context: any = {}
+): Promise<Value> {
   if (e.request()) {
     if (e.request()!.GET()) {
       return await getRequest(e.request()!.STRING().text);
     }
     return null;
   } else if (e.value()) {
-    return evaluateValue(e.value()!);
-  } else if (e.print()) {
-    const v = evaluateExpression(e.print()!.expression());
-    Promise.resolve(v).then((val) => console.log(val));
-    return null;
-  } else {
-    let stringExpression = e.text;
-    return removeQuotes(stringExpression);
+    return evaluateValue(e.value()!, context);
   }
+  return null;
 }
 
-function evaluateValue(t: parser.ValueContext): ExpressionValue {
+function evaluateValue(t: parser.ValueContext, context: any): Value {
+  if (t.var()) {
+    if (context[t.var()!.text]) {
+      return context[t.var()!.text]
+    } else {
+      throw new Error("Undefined variable")
+    }
+  }
   const content = t.text;
   if (!content) {
     return null;
@@ -55,6 +68,10 @@ function evaluateValue(t: parser.ValueContext): ExpressionValue {
   } else {
     return content;
   }
+  // else {
+  //   let stringExpression = e.text;
+  //   return removeQuotes(stringExpression);
+  // }
 }
 
 async function interpret(codeString: string) {
@@ -63,8 +80,8 @@ async function interpret(codeString: string) {
   let tokenStream = new CommonTokenStream(l);
   let p = new parser.httpParser(tokenStream);
 
-  let result = p.expression();
-  return await evaluateExpression(result);
+  let result = p.command();
+  return await evaluateCommand(result);
 }
 
 export default interpret;
