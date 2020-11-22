@@ -30,7 +30,7 @@ function parseArray(stringifiedArray: string, context: any): Object {
       }
     }
   })
-  return result;
+  return Array.from(result.values());
 }
 
 // function parseJSON(s: string, context: any): Object {
