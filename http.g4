@@ -1,11 +1,8 @@
 grammar http;
 
-toplevel:
-	command EOF;
+toplevel: command EOF;
 
-expression:
-	value
-	| request;
+expression: value | request;
 
 command:
 	<assoc = right> command SEMICOLON command
@@ -14,6 +11,8 @@ command:
 
 LPAREN: '(';
 RPAREN: ')';
+LBRACKET: '[';
+RBRACKET: ']';
 LBRACE: '{';
 RBRACE: '}';
 COLON: ':';
@@ -35,6 +34,10 @@ request: GET FROM STRING | POST json TO STRING;
 
 json: LBRACE RBRACE | LBRACE pair (COMMA pair)* RBRACE;
 
+array:
+	LBRACKET RBRACKET
+	| LBRACKET value (COMMA value)* RBRACKET;
+
 pair: key COLON value;
 
 NAME: [a-zA-Z][a-zA-Z]*;
@@ -44,7 +47,7 @@ key: STRING;
 
 var: NAME;
 
-value: INT | STRING | json | var;
+value: INT | STRING | json | var | array;
 
 INT: [0-9][0-9]*;
 

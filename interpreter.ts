@@ -4,7 +4,7 @@ import * as lexer from "./generated/httpLexer";
 import * as parser from "./generated/httpParser";
 
 
-type Value = number | string | Object | null;
+type Value = number | string | Object | null | Array<Value>;
 
 function isNumeric(s: string): boolean {
   return !isNaN(parseFloat(s));
@@ -14,9 +14,17 @@ function removeQuotes(s: string): string {
   return s.substr(1, s.length - 2);
 }
 
-function getRequest(s: string): Promise<Object> {
+async function getRequest(s: string): Promise<Object> {
   const url = new URL(removeQuotes(s));
   return fetch(url).then((res) => res.json());
+}
+
+async function postRequest(s: string, body: Object): Promise<Object> {
+  const url = new URL(removeQuotes(s))
+  return fetch(url, {
+    method: 'POST',
+    body: JSON.stringify(body)
+  })
 }
 
 async function evaluateCommand(
@@ -41,8 +49,10 @@ async function evaluateExpression(
 ): Promise<Value> {
   if (e.request()) {
     if (e.request()!.GET()) {
-      return await getRequest(e.request()!.STRING().text);
-    }
+      return await getRequest(e.request()!.STRING().text); }
+    // } else {
+    //   return await postRequest(e.request()!.STRING().text, evaluateValue(e.request()!.json(), context))
+    // }
     return null;
   } else if (e.value()) {
     return evaluateValue(e.value()!, context);
@@ -66,7 +76,15 @@ function evaluateValue(t: parser.ValueContext, context: any): Value {
   } else if (t.STRING()) {
     return removeQuotes(content);
   } else if (t.json()) {
-    return JSON.parse(t.json()!.text);
+    return JSON.parse(t.json()!.text, function(_, value) {
+      if (typeof(value) === 'string' && value[0] === '$'){
+        const variableName = value.substr(1)
+        return context[variableName]
+      }
+      return value
+    });
+  } else if (t.array()) {
+    return JSON.parse(t.array()!.text);
   } else {
     return content;
   }
