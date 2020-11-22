@@ -1,7 +1,7 @@
 import { CharStreams, CommonTokenStream } from "antlr4ts";
 import fetch from "node-fetch";
-import * as lexer from "./generated/httpLexer";
-import * as parser from "./generated/httpParser";
+import * as lexer from "../generated/httpLexer";
+import * as parser from "../generated/httpParser";
 
 import { isNumeric, parseJson, removeQuotes } from './utils';
 
