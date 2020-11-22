@@ -63,15 +63,13 @@ function evaluateValue(t: parser.ValueContext, context: any): Value {
     return null;
   } else if (isNumeric(content)) {
     return parseFloat(content);
+  } else if (t.STRING()) {
+    return removeQuotes(content);
   } else if (t.json()) {
     return JSON.parse(t.json()!.text);
   } else {
     return content;
   }
-  // else {
-  //   let stringExpression = e.text;
-  //   return removeQuotes(stringExpression);
-  // }
 }
 
 async function interpret(codeString: string) {
