@@ -1,11 +1,16 @@
 grammar http;
 
+toplevel:
+	command EOF;
+
 expression:
-	assign
-	| value
-	| request
-	| print
-	| <assoc = right> expression SEMICOLON expression;
+	value
+	| request;
+
+command:
+	<assoc = right> command SEMICOLON command
+	| assign
+	| print;
 
 LPAREN: '(';
 RPAREN: ')';
