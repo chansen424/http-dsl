@@ -3,7 +3,7 @@ import fetch from "node-fetch";
 import * as lexer from "../generated/httpLexer";
 import * as parser from "../generated/httpParser";
 
-import { isNumeric, parseArray, parseJson, removeEnclosing } from './utils';
+import { parseArray, parseJson, removeEnclosing } from './utils';
 import { Value } from './types';
 import { VAR_NOT_FOUND } from "./errors";
 
