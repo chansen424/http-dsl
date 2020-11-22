@@ -3,26 +3,11 @@ import fetch from "node-fetch";
 import * as lexer from "./generated/httpLexer";
 import * as parser from "./generated/httpParser";
 
+import { isNumeric, parseJson, removeQuotes } from './utils';
+
 
 type Value = number | string | Object | null | Array<Value>;
 
-function isNumeric(s: string): boolean {
-  return !isNaN(parseFloat(s));
-}
-
-function removeQuotes(s: string): string {
-  return s.substr(1, s.length - 2);
-}
-
-function parseJSON(s: string, context: any): Object {
-  return JSON.parse(s, function(_, value) {
-    if (typeof(value) === 'string' && value[0] === '$'){
-      const variableName = value.substr(1)
-      return context[variableName]
-    }
-    return value
-  });
-}
 
 async function getRequest(s: string): Promise<Object> {
   const url = new URL(removeQuotes(s));
@@ -59,12 +44,11 @@ async function evaluateExpression(
 ): Promise<Value> {
   if (e.request()) {
     if (e.request()!.GET()) {
-      return await getRequest(e.request()!.STRING().text); 
+      return await getRequest(e.request()!.STRING().text);
     } else {
-      return await postRequest(e.request()!.STRING().text, 
-        parseJSON(e.request()!.json()!.text, context))
+      return await postRequest(e.request()!.STRING().text,
+        parseJson(e.request()!.json()!.text, context))
     }
-    return null;
   } else if (e.value()) {
     return evaluateValue(e.value()!, context);
   }
@@ -87,7 +71,7 @@ function evaluateValue(t: parser.ValueContext, context: any): Value {
   } else if (t.STRING()) {
     return removeQuotes(content);
   } else if (t.json()) {
-    return parseJSON(t.json()!.text, context)
+    return parseJson(t.json()!.text, context)
   } else if (t.array()) {
     return JSON.parse(t.array()!.text);
   } else {
