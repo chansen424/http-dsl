@@ -3,19 +3,18 @@ import fetch from "node-fetch";
 import * as lexer from "../generated/httpLexer";
 import * as parser from "../generated/httpParser";
 
-import { isNumeric, parseJson, removeQuotes } from './utils';
-
-
-type Value = number | string | Object | null | Array<Value>;
+import { isNumeric, parseArray, parseJson, removeEnclosing } from './utils';
+import { Value } from './types';
+import { VAR_NOT_FOUND } from "./errors";
 
 
 async function getRequest(s: string): Promise<Object> {
-  const url = new URL(removeQuotes(s));
+  const url = new URL(removeEnclosing(s));
   return fetch(url).then((res) => res.json());
 }
 
 async function postRequest(s: string, body: Object): Promise<Object> {
-  const url = new URL(removeQuotes(s))
+  const url = new URL(removeEnclosing(s))
   return fetch(url, {
     method: 'POST',
     body: JSON.stringify(body)
@@ -60,20 +59,20 @@ function evaluateValue(t: parser.ValueContext, context: any): Value {
     if (context[t.var()!.text]) {
       return context[t.var()!.text]
     } else {
-      throw new Error("Undefined variable")
+      throw VAR_NOT_FOUND;
     }
   }
   const content = t.text;
   if (!content) {
     return null;
-  } else if (isNumeric(content)) {
-    return parseFloat(content);
+  } else if (t.INT()) {
+    return parseInt(content);
   } else if (t.STRING()) {
-    return removeQuotes(content);
+    return removeEnclosing(content);
   } else if (t.json()) {
     return parseJson(t.json()!.text, context)
   } else if (t.array()) {
-    return JSON.parse(t.array()!.text);
+    return parseArray(t.array()!.text, context);
   } else {
     return content;
   }
