@@ -10,19 +10,17 @@ type PostResponse = {
 
 export async function getGreeting(): Promise<string> {
   const data: FirebaseFirestore.DocumentData = (await ref.get()).data()!
-  console.log(data.greeting)
   return data.greeting
 }
 
 export async function getNames(): Promise<string[]> {
   const data: FirebaseFirestore.DocumentData = (await ref.get()).data()!
-  console.log(data.names)
   return data.names
 }
 
 export async function setGreeting(greeting: string): Promise<PostResponse> {
   return ref.update({
-    greeting: greeting
+    greeting
   }).then(() => {
     return {success: true}
   }).catch(err => {
