@@ -8,20 +8,20 @@ type PostResponse = {
   error?: string
 }
 
-export async function getGreeting(): Promise<string> {
+export async function getGreeting(): Promise<{data: string}> {
   const data: FirebaseFirestore.DocumentData = (await ref.get()).data()!
-  return data.greeting
+  console.log({data: data.greeting})
+  return {data: data.greeting}
 }
 
-export async function getNames(): Promise<string[]> {
+export async function getNames(): Promise<{data: string[]}> {
   const data: FirebaseFirestore.DocumentData = (await ref.get()).data()!
-  return data.names
+  console.log({data: data.names})
+  return {data: data.names}
 }
 
-export async function setGreeting(greeting: string): Promise<PostResponse> {
-  return ref.update({
-    greeting
-  }).then(() => {
+async function updateObject(updatedObj: any): Promise<PostResponse> {
+  return ref.update(updatedObj).then(() => {
     return {success: true}
   }).catch(err => {
     return {
@@ -29,32 +29,21 @@ export async function setGreeting(greeting: string): Promise<PostResponse> {
       error: err.message
     }
   })
+  
 }
 
-export async function resetNames(): Promise<PostResponse> {
-  return ref.update({
-    names: []
-  }).then(() => {
-    return {success: true}
-  }).catch(err => {
-    return {
-      success: false,
-      err: err.message
-    }
-  })
+export function setGreeting(greeting: string): Promise<PostResponse> {
+  return updateObject({greeting})
 }
 
-export async function editName(name: string, remove: boolean = false): Promise<PostResponse> {
-  return ref.update({
+export function resetNames(): Promise<PostResponse> {
+  return updateObject({names: []})
+}
+
+export function editName(name: string, remove: boolean = false): Promise<PostResponse> {
+  return updateObject({
     names: remove 
     ? firestore.FieldValue.arrayRemove(name) 
     : firestore.FieldValue.arrayUnion(name)
-  }).then(() => {
-    return {success: true}
-  }).catch(err => {
-    return {
-      success: false,
-      err: err.message
-    }
   })
 }

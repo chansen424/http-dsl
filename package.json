@@ -12,8 +12,10 @@
   "author": "Christopher Hansen and Ansh Godha",
   "license": "GNU General Public License v3",
   "dependencies": {
+    "@types/express": "^4.17.9",
     "antlr4ts": "^0.5.0-alpha.3",
     "dotenv": "^8.2.0",
+    "express": "^4.17.1",
     "firebase-admin": "^9.4.1",
     "node-fetch": "^2.6.1",
     "nodemon": "^2.0.6",
