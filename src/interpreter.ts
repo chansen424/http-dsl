@@ -1,36 +1,20 @@
 import { CharStreams, CommonTokenStream } from "antlr4ts";
 import fetch from "node-fetch";
-import * as lexer from "./generated/httpLexer";
-import * as parser from "./generated/httpParser";
+import * as lexer from "../generated/httpLexer";
+import * as parser from "../generated/httpParser";
 
+import { parseArray, parseJson, removeEnclosing } from './utils';
+import { Value } from './types';
+import { VAR_NOT_FOUND } from "./errors";
 
-type Value = number | string | Object | null | Array<Value>;
-
-function isNumeric(s: string): boolean {
-  return !isNaN(parseFloat(s));
-}
-
-function removeQuotes(s: string): string {
-  return s.substr(1, s.length - 2);
-}
-
-function parseJSON(s: string, context: any): Object {
-  return JSON.parse(s, function(_, value) {
-    if (typeof(value) === 'string' && value[0] === '$'){
-      const variableName = value.substr(1)
-      return context[variableName]
-    }
-    return value
-  });
-}
 
 async function getRequest(s: string): Promise<Object> {
-  const url = new URL(removeQuotes(s));
+  const url = new URL(removeEnclosing(s));
   return fetch(url).then((res) => res.json());
 }
 
 async function postRequest(s: string, body: Object): Promise<Object> {
-  const url = new URL(removeQuotes(s))
+  const url = new URL(removeEnclosing(s))
   return fetch(url, {
     method: 'POST',
     body: JSON.stringify(body)
@@ -59,12 +43,11 @@ async function evaluateExpression(
 ): Promise<Value> {
   if (e.request()) {
     if (e.request()!.GET()) {
-      return await getRequest(e.request()!.STRING().text); 
+      return await getRequest(e.request()!.STRING().text);
     } else {
-      return await postRequest(e.request()!.STRING().text, 
-        parseJSON(e.request()!.json()!.text, context))
+      return await postRequest(e.request()!.STRING().text,
+        parseJson(e.request()!.json()!.text, context))
     }
-    return null;
   } else if (e.value()) {
     return evaluateValue(e.value()!, context);
   }
@@ -76,20 +59,20 @@ function evaluateValue(t: parser.ValueContext, context: any): Value {
     if (context[t.var()!.text]) {
       return context[t.var()!.text]
     } else {
-      throw new Error("Undefined variable")
+      throw VAR_NOT_FOUND;
     }
   }
   const content = t.text;
   if (!content) {
     return null;
-  } else if (isNumeric(content)) {
-    return parseFloat(content);
+  } else if (t.INT()) {
+    return parseInt(content);
   } else if (t.STRING()) {
-    return removeQuotes(content);
+    return removeEnclosing(content);
   } else if (t.json()) {
-    return parseJSON(t.json()!.text, context)
+    return parseJson(t.json()!.text, context)
   } else if (t.array()) {
-    return JSON.parse(t.array()!.text);
+    return parseArray(t.array()!.text, context);
   } else {
     return content;
   }
