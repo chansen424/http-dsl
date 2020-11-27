@@ -1,27 +1,48 @@
-import express = require("express")
+import express = require("express");
+import bodyparser = require("body-parser");
 import {
-  getGreeting, 
-  getNames, 
-  setGreeting, 
-  resetNames, 
-  editName
-} from './db-funtions'
+  getGreeting,
+  getNames,
+  setGreeting,
+  resetNames,
+  editName,
+  PostResponse,
+} from "./db-funtions";
 
-const app: express.Application = express()
-const PORT = process.env.PORT || 8000
+const app: express.Application = express();
+const PORT = process.env.PORT || 8000;
+app.use(bodyparser.json());
 
-app.get("/", (_, res) => res.send({data: "Welcome to a quick demo of http-dsl!"}))
+function responseUtil(
+  res: express.Response,
+  callback: (
+    ...args: any
+  ) => Promise<PostResponse | { data: string | string[] }>,
+  ...args: any
+) {
+  callback(...args)
+    .then((result) => res.status(200).send(result))
+    .catch((err) => res.status(400).send({ error: err.message }));
+}
 
-app.get("/greeting", (_, res) => getGreeting().then(result => res.send(result)))
+app.get("/", (_, res) =>
+  res.send({ data: "Welcome to a quick demo of http-dsl!" })
+);
 
-app.get("/names", (_, res) => getNames().then(result => res.send(result)))
+app.get("/greeting", (_, res) => responseUtil(res, getGreeting));
 
-app.post("/set-greeting", (req, res) => setGreeting(req.body.greeting).then(result => res.send(result)))
+app.get("/names", (_, res) => responseUtil(res, getNames));
 
-app.post("/reset-names", (_, res) => resetNames().then(result => res.send(result)))
+app.post("/set-greeting", (req, res) =>
+  responseUtil(res, setGreeting, req.body.greeting)
+);
 
-app.post("/add-name", (req, res) => editName(req.body.name).then(result => res.send(result)))
+app.post("/reset-names", (_, res) => responseUtil(res, resetNames));
 
-app.post("/remove-name", (req, res) => editName(req.body.name, false).then(result => res.send(result)))
+app.post("/add-name", (req, res) => responseUtil(res, editName, req.body.name));
 
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`))
+app.post("/remove-name", (req, res) =>
+  responseUtil(res, editName, req.body.name, true)
+);
+
+app.listen(PORT, () => console.log(`Server started on port ${PORT}`));

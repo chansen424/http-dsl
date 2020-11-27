@@ -1,6 +1,5 @@
-import { VAR_NOT_FOUND } from './errors';
-import { Value } from './types';
-
+import { VAR_NOT_FOUND } from "./errors";
+import { Value } from "./types";
 
 const variableInJSON = /: *[a-zA-Z0-9]+/g;
 
@@ -16,7 +15,7 @@ function parseArray(stringifiedArray: string, context: any): Object {
   const elements = removeEnclosing(stringifiedArray).split(/[ ,]+/);
   const result: Map<Number, Value> = new Map();
   elements.forEach((value, index) => {
-    if (value.startsWith("\"")) {
+    if (value.startsWith('"')) {
       result.set(index, removeEnclosing(value));
     } else if (isNumeric(value)) {
       result.set(index, parseInt(value));
@@ -29,7 +28,7 @@ function parseArray(stringifiedArray: string, context: any): Object {
         throw VAR_NOT_FOUND;
       }
     }
-  })
+  });
   return Array.from(result.values());
 }
 
@@ -48,8 +47,9 @@ function parseJson(stringifiedJson: string, context: any): Object {
     (match: string) => {
       const variable = match.substring(1).trim();
       if (variable in context) {
-        return typeof context[variable] === 'string' ?
-          `: "${context[variable]}"` : `: ${context[variable]}`;
+        return typeof context[variable] === "string"
+          ? `: "${context[variable]}"`
+          : `: ${context[variable]}`;
       } else {
         throw VAR_NOT_FOUND;
       }
