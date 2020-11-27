@@ -7,6 +7,7 @@ expression: value | request | expression LBRACKET key RBRACKET;
 command:
 	<assoc = right> command SEMICOLON command
 	| assign
+	| assign_field
 	| print;
 
 LPAREN: '(';
@@ -27,6 +28,8 @@ TO: 'to';
 FROM: 'from';
 
 assign: LET var EQUALS expression;
+
+assign_field: LET expression LBRACKET key RBRACKET EQUALS expression;
 
 print: PRINT LPAREN expression RPAREN;
 

@@ -5,7 +5,7 @@ import * as parser from "../generated/httpParser";
 
 import { parseArray, parseJson, removeEnclosing } from "./utils";
 import { Value } from "./types";
-import { VAR_NOT_FOUND, ILLEGAL_EXTRACTION } from "./errors";
+import { VAR_NOT_FOUND, ILLEGAL_EXTRACTION, ILLEGAL_SET } from "./errors";
 
 async function getRequest(s: string): Promise<Object> {
   const url = new URL(removeEnclosing(s));
@@ -32,6 +32,19 @@ async function evaluateCommand(
   } else if (c.print()) {
     const value = evaluateExpression(c.print()!.expression(), context);
     await Promise.resolve(value).then((v) => console.log(v));
+  } else if (c.assign_field()) {
+    const v1 = await evaluateExpression(
+      c.assign_field()!.expression()[0],
+      context
+    );
+    if (typeof v1 !== "object") throw ILLEGAL_SET;
+    const obj = v1 as { [key: string]: Value };
+    const key = c.assign_field()!.key().text;
+    const v2 = await evaluateExpression(
+      c.assign_field()!.expression()[1],
+      context
+    );
+    obj[removeEnclosing(key)] = v2;
   } else {
     evaluateCommand(c.command()[0], context).then(() =>
       evaluateCommand(c.command()[1], context)
