@@ -5,7 +5,7 @@ import * as parser from "../generated/httpParser";
 
 import { parseArray, parseJson, removeEnclosing } from "./utils";
 import { Value } from "./types";
-import { VAR_NOT_FOUND } from "./errors";
+import { VAR_NOT_FOUND, ILLEGAL_EXTRACTION } from "./errors";
 
 async function getRequest(s: string): Promise<Object> {
   const url = new URL(removeEnclosing(s));
@@ -54,6 +54,11 @@ async function evaluateExpression(
     }
   } else if (e.value()) {
     return evaluateValue(e.value()!, context);
+  } else if (e.key()) {
+    const v = await evaluateExpression(e.expression()!, context);
+    if (typeof v !== "object") throw ILLEGAL_EXTRACTION;
+    const obj = v as { [key: string]: Value };
+    return obj[removeEnclosing(e.key()!.text)];
   }
   return null;
 }
@@ -63,7 +68,7 @@ function evaluateValue(t: parser.ValueContext, context: any): Value {
     if (context[t.var()!.text]) {
       return context[t.var()!.text];
     } else {
-      throw VAR_NOT_FOUND;
+      throw VAR_NOT_FOUND(t.var()!.text);
     }
   }
   const content = t.text;

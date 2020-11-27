@@ -1,3 +1,3 @@
-const VAR_NOT_FOUND = new Error("Variable not found");
-
-export { VAR_NOT_FOUND };
+const VAR_NOT_FOUND = (x: string) => new Error(`Variable not found: ${x}`);
+const ILLEGAL_EXTRACTION = new Error("Can only extract attributes from a JSON");
+export { VAR_NOT_FOUND, ILLEGAL_EXTRACTION };

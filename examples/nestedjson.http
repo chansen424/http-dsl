@@ -6,4 +6,7 @@ print(
 let x = 0;
 let age = 20;
 let json = {"num": x, "extra": {"name": "Ansh", "age": age}};
-print(json)
+print(json);
+print(json["num"]);
+print(json["extra"]["name"])
+

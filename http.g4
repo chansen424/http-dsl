@@ -2,7 +2,7 @@ grammar http;
 
 toplevel: command EOF;
 
-expression: value | request;
+expression: value | request | expression LBRACKET key RBRACKET;
 
 command:
 	<assoc = right> command SEMICOLON command
