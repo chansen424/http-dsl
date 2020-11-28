@@ -18,6 +18,7 @@ async function postRequest(s: string, body: Object): Promise<Object> {
   console.log(body);
   return fetch(url, {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
 }
