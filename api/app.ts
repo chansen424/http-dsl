@@ -22,7 +22,10 @@ function responseUtil(
 ) {
   callback(...args)
     .then((result) => res.status(200).send(result))
-    .catch((err) => res.status(400).send({ error: err.message }));
+    .catch((err) => {
+      console.log(err);
+      res.status(400).send({ error: err.message });
+    });
 }
 
 app.get("/", (_, res) =>

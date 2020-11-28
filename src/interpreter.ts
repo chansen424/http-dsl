@@ -14,6 +14,8 @@ async function getRequest(s: string): Promise<Object> {
 
 async function postRequest(s: string, body: Object): Promise<Object> {
   const url = new URL(removeEnclosing(s));
+  console.log(url);
+  console.log(body);
   return fetch(url, {
     method: "POST",
     body: JSON.stringify(body),
