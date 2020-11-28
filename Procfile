@@ -1,1 +1,1 @@
-web: node app.js
+web: ./api/ts-node app.ts
