@@ -36,9 +36,10 @@ app.get("/greeting", (_, res) => responseUtil(res, getGreeting));
 
 app.get("/names", (_, res) => responseUtil(res, getNames));
 
-app.post("/set-greeting", (req, res) =>
-  responseUtil(res, setGreeting, req.body.greeting)
-);
+app.post("/set-greeting", (req, res) => {
+  console.log(req.body);
+  responseUtil(res, setGreeting, req.body.greeting);
+});
 
 app.post("/reset-names", (_, res) => responseUtil(res, resetNames));
 
