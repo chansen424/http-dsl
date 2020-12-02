@@ -4,7 +4,7 @@ Ansh Godha, Christopher Hansen
 
 ## Vision
 
-We want to build (in Typescript) an interpreter for an easily readable domain specific language that can manipulate JSON objects and make HTTP requests. This means we aim have the ability to submit GET, POST and other HTTP requests through our REPL interface, define JSON objects, carry out basic evaluations using contexts, and have the ability to manipulate JSON objects in a way that is useful for someone who is making API calls with different parameters. Essentially, this would allow someone to make simple requests like ` GET from “https://my.api.example/id=3” `. We also will support option configuration for HTTP requests (like encodings (XML, x-www-form-urlencoded), cookies, etc.
+We want to build (in Typescript) an interpreter for an easily readable domain specific language that can manipulate JSON objects and make HTTP requests. This means we aim have the ability to submit GET, POST and other HTTP requests through our DSL's programs, define JSON objects, carry out basic evaluations using contexts, and have the ability to manipulate JSON objects in a way that is useful for someone who is making API calls with different parameters. Essentially, this would allow someone to make simple requests like ` GET from “https://my.api.example/id=3” `. We also will support option configuration for HTTP requests (like encodings (XML, x-www-form-urlencoded), cookies, etc.
 
 ## Status
 
