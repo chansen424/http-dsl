@@ -1,26 +1,12 @@
 import { CharStreams, CommonTokenStream } from "antlr4ts";
-import fetch from "node-fetch";
 import * as lexer from "../generated/httpLexer";
 import * as parser from "../generated/httpParser";
 import fs = require("fs");
 
+import { getRequest, postRequest } from './requests';
 import { parseArray, parseJson, removeEnclosing } from "./utils";
 import { Value } from "./types";
 import { VAR_NOT_FOUND, ILLEGAL_EXTRACTION, ILLEGAL_SET } from "./errors";
-
-async function getRequest(s: string): Promise<Object> {
-  const url = new URL(removeEnclosing(s));
-  return fetch(url).then((res) => res.json());
-}
-
-async function postRequest(s: string, body: Object): Promise<Object> {
-  const url = new URL(removeEnclosing(s));
-  return fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-}
 
 async function evaluateCommand(
   c: parser.CommandContext,
