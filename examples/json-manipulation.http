@@ -9,4 +9,6 @@ print(json["dynamic"]);
 let json["dynamic"] = "redo";
 print(json["dynamic"]);
 let newfield = "extra";
-print(json[newfield])
+print(json[newfield]);
+del json["dynamic"];
+print(json)

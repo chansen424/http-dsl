@@ -55,6 +55,15 @@ async function evaluateCommand(
     } else {
       // v1 is an array
     }
+  } else if (c.delete_field()) {
+    const v1 = await evaluateExpression(
+      c.delete_field()!.expression(),
+      context
+    );
+    if (typeof v1 !== "object") throw ILLEGAL_SET;
+    const obj = v1 as { [key: string]: Value };
+    const key = c.delete_field()!.key().text;
+    delete obj[removeEnclosing(key)];
   } else {
     evaluateCommand(c.command()[0], context).then(() =>
       evaluateCommand(c.command()[1], context)

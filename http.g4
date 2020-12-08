@@ -2,14 +2,13 @@ grammar http;
 
 toplevel: command EOF;
 
-expression: value 
-| request 
-| expression LBRACKET expression RBRACKET;
+expression: value | request | expression LBRACKET key RBRACKET;
 
 command:
 	<assoc = right> command SEMICOLON command
 	| assign
 	| assign_field
+	| delete_field
 	| print;
 
 LPAREN: '(';
@@ -24,6 +23,7 @@ COMMA: ',';
 EQUALS: '=';
 LET: 'let';
 PRINT: 'print';
+DEL: 'del';
 GET: 'GET';
 POST: 'POST';
 TO: 'to';
@@ -32,6 +32,8 @@ FROM: 'from';
 assign: LET var EQUALS expression;
 
 assign_field: LET expression LBRACKET expression RBRACKET EQUALS expression;
+
+delete_field: DEL expression LBRACKET key RBRACKET;
 
 print: PRINT LPAREN expression RPAREN;
 
