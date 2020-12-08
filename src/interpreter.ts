@@ -2,6 +2,7 @@ import { CharStreams, CommonTokenStream } from "antlr4ts";
 import fetch from "node-fetch";
 import * as lexer from "../generated/httpLexer";
 import * as parser from "../generated/httpParser";
+import fs = require("fs");
 
 import { parseArray, parseJson, removeEnclosing } from "./utils";
 import { Value } from "./types";
@@ -64,6 +65,11 @@ async function evaluateCommand(
     const obj = v1 as { [key: string]: Value };
     const key = c.delete_field()!.key().text;
     delete obj[removeEnclosing(key)];
+  } else if (c.input()) {
+    const file = removeEnclosing(c.input()!.key().text);
+    const v1 = await evaluateExpression(c.input()!.expression(), context);
+    if (typeof v1 !== "object") throw ILLEGAL_SET;
+    fs.writeFileSync(file, JSON.stringify(v1, null, 2));
   } else {
     evaluateCommand(c.command()[0], context).then(() =>
       evaluateCommand(c.command()[1], context)

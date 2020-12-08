@@ -9,6 +9,7 @@ command:
 	| assign
 	| assign_field
 	| delete_field
+	| input
 	| print;
 
 LPAREN: '(';
@@ -28,12 +29,15 @@ GET: 'GET';
 POST: 'POST';
 TO: 'to';
 FROM: 'from';
+DLEFTARROW: '<<';
 
 assign: LET var EQUALS expression;
 
 assign_field: LET expression LBRACKET expression RBRACKET EQUALS expression;
 
 delete_field: DEL expression LBRACKET key RBRACKET;
+
+input: key DLEFTARROW expression;
 
 print: PRINT LPAREN expression RPAREN;
 

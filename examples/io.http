@@ -1,0 +1,2 @@
+let s = GET from "https://http-dsl-test-api.herokuapp.com/greeting";
+"./examples/io_output/sample_write_1.txt" << s
