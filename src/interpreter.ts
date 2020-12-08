@@ -39,13 +39,22 @@ async function evaluateCommand(
       context
     );
     if (typeof v1 !== "object") throw ILLEGAL_SET;
-    const obj = v1 as { [key: string]: Value };
-    const key = c.assign_field()!.key().text;
-    const v2 = await evaluateExpression(
-      c.assign_field()!.expression()[1],
-      context
-    );
-    obj[removeEnclosing(key)] = v2;
+    if (!Array.isArray(v1)) {
+      // v1 is an object
+      const obj = v1 as { [key: string]: Value };
+      const key = await evaluateExpression(
+        c.assign_field()!.expression()[1],
+        context
+      );
+      if (typeof key !== "string") throw ILLEGAL_SET;
+      const v2 = await evaluateExpression(
+        c.assign_field()!.expression()[2],
+        context
+      );
+      obj[key] = v2;
+    } else {
+      // v1 is an array
+    }
   } else {
     evaluateCommand(c.command()[0], context).then(() =>
       evaluateCommand(c.command()[1], context)

@@ -2,15 +2,5 @@ print(
   {"name": "Chris", "Education": 
     {"college": "Cornell", "degree": "Computer Science"}
   }
-);
-let x = 0;
-let age = 20;
-let json = {"num": x, "extra": {"name": "Ansh", "age": age}};
-let json["dynamic"] = "this is cool";
-print(json);
-print(json["num"]);
-print(json["extra"]["name"]);
-print(json["dynamic"]);
-let json["dynamic"] = "redo";
-print(json["dynamic"])
+)
 

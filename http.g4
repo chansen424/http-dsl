@@ -2,7 +2,9 @@ grammar http;
 
 toplevel: command EOF;
 
-expression: value | request | expression LBRACKET key RBRACKET;
+expression: value 
+| request 
+| expression LBRACKET expression RBRACKET;
 
 command:
 	<assoc = right> command SEMICOLON command
@@ -29,7 +31,7 @@ FROM: 'from';
 
 assign: LET var EQUALS expression;
 
-assign_field: LET expression LBRACKET key RBRACKET EQUALS expression;
+assign_field: LET expression LBRACKET expression RBRACKET EQUALS expression;
 
 print: PRINT LPAREN expression RPAREN;
 
