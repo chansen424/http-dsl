@@ -1,7 +1,18 @@
-import { VAR_NOT_FOUND } from "./errors";
-import { Value } from "./types";
+import * as parser from "../generated/httpParser";
+
+import { VAR_NOT_FOUND, UNDEFINED_PARSER_CONTEXT } from "./errors";
+import { Value, Context } from "./types";
 
 const variableInJSON = /: *[a-zA-Z0-9]+/g;
+
+function variableInScope(variable: parser.VarContext | undefined, context: Context) {
+  if (variable === undefined) throw UNDEFINED_PARSER_CONTEXT;
+  if (context[variable.text]) {
+    return context[variable.text];
+  } else {
+    throw VAR_NOT_FOUND(variable.text);
+  }
+}
 
 function isJson(s: string): boolean {
   return s.startsWith("{") && s.endsWith("}");
@@ -62,4 +73,4 @@ function removeEnclosing(s: string): string {
   return s.substr(1, s.length - 2);
 }
 
-export { isNumeric, parseArray, parseJson, removeEnclosing };
+export { isNumeric, parseArray, parseJson, removeEnclosing, variableInScope };
