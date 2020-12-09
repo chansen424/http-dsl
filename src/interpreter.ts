@@ -97,15 +97,11 @@ async function evaluateExpression(
       const array = v as Array<Value>;
       return array[parseInt(e.INT()!.text)]
     }
-
   }
   return null;
 }
 
 function evaluateValue(t: parser.ValueContext, context: Context): Value {
-  // if (t.var()) {
-  //   variableInScope(t.var(), context);
-  // }
   const content = t.text;
   if (!t.text) {
     return null;
