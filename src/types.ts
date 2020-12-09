@@ -1,3 +1,5 @@
 type Value = number | string | Object | null | Array<Value>;
 
-export { Value };
+type Context = { [key: string]: Value };
+
+export { Value, Context };
