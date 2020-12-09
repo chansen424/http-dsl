@@ -52,9 +52,9 @@ async function evaluateCommand(
     const obj = v1 as { [key: string]: Value };
     const key = c.delete_field()!.key().text;
     delete obj[removeEnclosing(key)];
-  } else if (c.input()) {
-    const file = removeEnclosing(c.input()!.key().text);
-    const v1 = await evaluateExpression(c.input()!.expression(), context);
+  } else if (c.output()) {
+    const file = removeEnclosing(c.output()!.key().text);
+    const v1 = await evaluateExpression(c.output()!.expression(), context);
     if (typeof v1 !== "object") throw ILLEGAL_SET;
     fs.writeFileSync(file, JSON.stringify(v1, null, 2));
   } else {

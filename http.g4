@@ -9,7 +9,7 @@ command:
 	| assign
 	| assign_field
 	| delete_field
-	| input
+	| output
 	| print;
 
 LPAREN: '(';
@@ -33,11 +33,12 @@ DLEFTARROW: '<<';
 
 assign: LET var EQUALS expression;
 
-assign_field: LET expression LBRACKET expression RBRACKET EQUALS expression;
+assign_field:
+	LET expression LBRACKET expression RBRACKET EQUALS expression;
 
 delete_field: DEL expression LBRACKET key RBRACKET;
 
-input: key DLEFTARROW expression;
+output: key DLEFTARROW expression;
 
 print: PRINT LPAREN expression RPAREN;
 
