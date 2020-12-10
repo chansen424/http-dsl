@@ -130,9 +130,18 @@ async function interpret(codeString: string) {
   let l = new lexer.httpLexer(inputStream);
   let tokenStream = new CommonTokenStream(l);
   let p = new parser.httpParser(tokenStream);
-
+  let env = fs.readFileSync("./.env", { encoding: "utf8", flag: "r" });
+  let lines = env.split("\n");
+  let envvars = {} as { [key: string]: Value };
+  lines.forEach((line) => {
+    const components = line.split("=");
+    envvars[components[0]] = components[1];
+  });
+  let context = {
+    env: envvars,
+  };
   let result = p.command();
-  return await evaluateCommand(result);
+  return await evaluateCommand(result, context);
 }
 
 export default interpret;
