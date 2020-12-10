@@ -1,30 +1,16 @@
 import { CharStreams, CommonTokenStream } from "antlr4ts";
-import fetch from "node-fetch";
 import * as lexer from "../generated/httpLexer";
 import * as parser from "../generated/httpParser";
 import fs = require("fs");
 
-import { parseArray, parseJson, removeEnclosing } from "./utils";
-import { Value } from "./types";
-import { VAR_NOT_FOUND, ILLEGAL_EXTRACTION, ILLEGAL_SET } from "./errors";
-
-async function getRequest(s: string): Promise<Object> {
-  const url = new URL(removeEnclosing(s));
-  return fetch(url).then((res) => res.json());
-}
-
-async function postRequest(s: string, body: Object): Promise<Object> {
-  const url = new URL(removeEnclosing(s));
-  return fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-}
+import { getRequest, postRequest } from './requests';
+import { parseArray, parseJson, removeEnclosing, variableInScope } from "./utils";
+import { Value, Context, ObjectType } from "./types";
+import { ILLEGAL_EXTRACTION, ILLEGAL_SET } from "./errors";
 
 async function evaluateCommand(
   c: parser.CommandContext,
-  context: any = {}
+  context: Context = {}
 ): Promise<void> {
   if (c.assign()) {
     const value = evaluateExpression(c.assign()!.expression(), context);
@@ -40,21 +26,22 @@ async function evaluateCommand(
       context
     );
     if (typeof v1 !== "object") throw ILLEGAL_SET;
-    if (!Array.isArray(v1)) {
-      // v1 is an object
-      const obj = v1 as { [key: string]: Value };
-      const key = await evaluateExpression(
-        c.assign_field()!.expression()[1],
-        context
-      );
-      if (typeof key !== "string") throw ILLEGAL_SET;
-      const v2 = await evaluateExpression(
-        c.assign_field()!.expression()[2],
-        context
-      );
-      obj[key] = v2;
+    const key = await evaluateExpression(
+      c.assign_field()!.expression()[1],
+      context
+    );
+    const v2 = await evaluateExpression(
+      c.assign_field()!.expression()[2],
+      context
+    );
+    if (Array.isArray(v1)) {
+      const array = v1 as Array<Value>;
+      if (typeof key !== "number") throw ILLEGAL_SET;
+      array[key] = v2;
     } else {
-      // v1 is an array
+      const obj = v1 as { [key: string]: Value };
+      if (typeof key !== "string") throw ILLEGAL_SET;
+      obj[key] = v2;
     }
   } else if (c.delete_field()) {
     const v1 = await evaluateExpression(
@@ -65,9 +52,9 @@ async function evaluateCommand(
     const obj = v1 as { [key: string]: Value };
     const key = c.delete_field()!.key().text;
     delete obj[removeEnclosing(key)];
-  } else if (c.input()) {
-    const file = removeEnclosing(c.input()!.key().text);
-    const v1 = await evaluateExpression(c.input()!.expression(), context);
+  } else if (c.output()) {
+    const file = removeEnclosing(c.output()!.key().text);
+    const v1 = await evaluateExpression(c.output()!.expression(), context);
     if (typeof v1 !== "object") throw ILLEGAL_SET;
     fs.writeFileSync(file, JSON.stringify(v1, null, 2));
   } else {
@@ -79,7 +66,7 @@ async function evaluateCommand(
 
 async function evaluateExpression(
   e: parser.ExpressionContext,
-  context: any = {}
+  context: Context = {}
 ): Promise<Value> {
   if (e.request()) {
     if (e.request()!.GET()) {
@@ -92,25 +79,31 @@ async function evaluateExpression(
     }
   } else if (e.value()) {
     return evaluateValue(e.value()!, context);
-  } else if (e.key()) {
+  } else { // accessing
     const v = await evaluateExpression(e.expression()!, context);
     if (typeof v !== "object") throw ILLEGAL_EXTRACTION;
-    const obj = v as { [key: string]: Value };
-    return obj[removeEnclosing(e.key()!.text)];
+    if (e.key()) {
+      const obj = v as ObjectType;
+      return obj[removeEnclosing(e.key()!.text)];
+    } else if (e.var()) {
+      const value = variableInScope(e.var(), context);
+      if (Array.isArray(v)) {
+        return v[value as number]
+      } else {
+        const obj = v as ObjectType;
+        return obj[value as string];
+      }
+    } else if (e.INT()) {
+      const array = v as Array<Value>;
+      return array[parseInt(e.INT()!.text)]
+    }
   }
   return null;
 }
 
-function evaluateValue(t: parser.ValueContext, context: any): Value {
-  if (t.var()) {
-    if (context[t.var()!.text]) {
-      return context[t.var()!.text];
-    } else {
-      throw VAR_NOT_FOUND(t.var()!.text);
-    }
-  }
+function evaluateValue(t: parser.ValueContext, context: Context): Value {
   const content = t.text;
-  if (!content) {
+  if (!t.text) {
     return null;
   } else if (t.INT()) {
     return parseInt(content);
@@ -120,8 +113,8 @@ function evaluateValue(t: parser.ValueContext, context: any): Value {
     return parseJson(t.json()!.text, context);
   } else if (t.array()) {
     return parseArray(t.array()!.text, context);
-  } else {
-    return content;
+  } else { // this would just be a bunch of tokens, which can be a valid variable, so might as well check
+    return variableInScope(t.var(), context);
   }
 }
 

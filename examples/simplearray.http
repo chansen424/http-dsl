@@ -1,4 +1,7 @@
 let elem = 5;
 let ansh = "Ansh";
 let a = ["a", "b", elem, {"name": ansh}];
-print(a)
+print(a);
+let a[1] = "c";
+print(a);
+print(a[2])
