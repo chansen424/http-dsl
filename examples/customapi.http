@@ -1,4 +1,6 @@
 let d = POST {"greeting": "Hello!"} to "https://http-dsl-test-api.herokuapp.com/set-greeting";
 print(d);
 let s = GET from "https://http-dsl-test-api.herokuapp.com/greeting";
-print(s)
+print(s);
+let cookie = GET from "https://http-dsl-test-api.herokuapp.com/user" with {"Cookie": "user=Chris"};
+print(cookie)

@@ -1,5 +1,7 @@
 import express = require("express");
 import bodyparser = require("body-parser");
+import cookieparser = require("cookie-parser");
+
 import {
   getGreeting,
   getNames,
@@ -12,6 +14,7 @@ import {
 const app: express.Application = express();
 const PORT = process.env.PORT || 8000;
 app.use(bodyparser.json());
+app.use(cookieparser());
 
 function responseUtil(
   res: express.Response,
@@ -35,6 +38,8 @@ app.get("/", (_, res) =>
 app.get("/greeting", (_, res) => responseUtil(res, getGreeting));
 
 app.get("/names", (_, res) => responseUtil(res, getNames));
+
+app.get("/user", (req, res) => res.send({ user: req.cookies.user }));
 
 app.post("/set-greeting", (req, res) =>
   responseUtil(res, setGreeting, req.body.greeting)
