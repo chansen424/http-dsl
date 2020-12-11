@@ -1,16 +1,16 @@
-import fetch from "node-fetch";
+import fetch, { Headers } from "node-fetch";
 import { removeEnclosing } from "./utils";
 
-async function getRequest(s: string): Promise<Object> {
+async function getRequest(s: string, headers?: Headers): Promise<Object> {
   const url = new URL(removeEnclosing(s));
-  return fetch(url).then((res) => res.json());
+  return fetch(url, { headers }).then((res) => res.json());
 }
 
-async function postRequest(s: string, body: Object): Promise<Object> {
+async function postRequest(s: string, body: Object, headers?: Headers): Promise<Object> {
   const url = new URL(removeEnclosing(s));
   return fetch(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { ...headers, "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
 }
