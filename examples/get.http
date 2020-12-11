@@ -1,3 +1,5 @@
 print(GET from "https://aws.random.cat/meow?ref=apilist.fun");
 let x = GET from "https://aws.random.cat/meow?ref=apilist.fun";
+print(x);
+let x = GET from "https://aws.random.cat/meow?ref=apilist.fun" with { "Content-Type": "application/json"};
 print(x)
