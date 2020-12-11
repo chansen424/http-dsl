@@ -4,4 +4,6 @@ type Context = { [key: string]: Value };
 
 type ObjectType = Context;
 
-export { Value, Context, ObjectType };
+type Headers = { [key: string]: string };
+
+export { Value, Context, ObjectType, Headers };
