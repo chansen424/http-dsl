@@ -33,6 +33,7 @@ POST: 'POST';
 TO: 'to';
 FROM: 'from';
 DLEFTARROW: '<<';
+WITH: 'with';
 
 assign: LET var EQUALS expression;
 
@@ -45,9 +46,15 @@ output: key DLEFTARROW expression;
 
 print: PRINT LPAREN expression RPAREN;
 
-request: GET FROM STRING | POST json TO STRING;
+request:
+	GET FROM STRING
+	| GET FROM STRING WITH headers
+	| POST json TO STRING
+	| POST json TO STRING WITH headers;
 
 json: LBRACE RBRACE | LBRACE pair (COMMA pair)* RBRACE;
+
+headers: json;
 
 array:
 	LBRACKET RBRACKET
