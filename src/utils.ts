@@ -1,4 +1,5 @@
 import * as parser from "../generated/httpParser";
+const prompt = require("prompt-sync")({ sigint: true });
 
 import { VAR_NOT_FOUND, UNDEFINED_PARSER_CONTEXT, INVALID_HEADER } from "./errors";
 import { Value, Context, ObjectType, Headers } from "./types";
@@ -69,4 +70,8 @@ function removeEnclosing(s: string): string {
   return s.substr(1, s.length - 2);
 }
 
-export { isNumeric, parseArray, parseJson, parseHeaders, removeEnclosing, variableInScope };
+function userInput() {
+  return prompt('>> ');
+}
+
+export { userInput, isNumeric, parseArray, parseJson, parseHeaders, removeEnclosing, variableInScope };
