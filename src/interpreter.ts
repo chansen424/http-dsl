@@ -90,6 +90,8 @@ async function evaluateExpression(
     }
   } else if (e.input()) {
     return userInput();
+  } else if (e.PLUS()) {
+    return (evaluateValue(e.addable()![0] as parser.ValueContext, context) as string) + (evaluateValue(e.addable()![1] as parser.ValueContext, context) as string);
   } else if (e.value()) {
     return evaluateValue(e.value()!, context);
   } else { // accessing
@@ -118,13 +120,13 @@ function evaluateValue(t: parser.ValueContext, context: Context): Value {
   const content = t.text;
   if (!t.text) {
     return null;
-  } else if (t.INT()) {
+  } else if (t.INT && t.INT()) {
     return parseInt(content);
-  } else if (t.STRING()) {
+  } else if (t.STRING && t.STRING()) {
     return removeEnclosing(content);
-  } else if (t.json()) {
+  } else if (t.json && t.json()) {
     return parseJson(t.json()!.text, context);
-  } else if (t.array()) {
+  } else if (t.array && t.array()) {
     return parseArray(t.array()!.text, context);
   } else { // this would just be a bunch of tokens, which can be a valid variable, so might as well check
     return variableInScope(t.var(), context);
