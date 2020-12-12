@@ -2,5 +2,6 @@ let d = POST {"greeting": "Hello!"} to "https://http-dsl-test-api.herokuapp.com/
 print(d);
 let s = GET from "https://http-dsl-test-api.herokuapp.com/greeting";
 print(s);
-let cookie = GET from "http://localhost:8000/user" with {"Cookie": "user=Chris"};
+let userCookie = "user=Chris";
+let cookie = GET from "http://localhost:8000/user" with {"Cookie": userCookie};
 print(cookie)
