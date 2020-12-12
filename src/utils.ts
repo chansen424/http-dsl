@@ -4,7 +4,7 @@ const prompt = require("prompt-sync")({ sigint: true });
 import { VAR_NOT_FOUND, UNDEFINED_PARSER_CONTEXT, INVALID_HEADER } from "./errors";
 import { Value, Context, ObjectType, Headers } from "./types";
 
-const variableInJSON = /: *[a-zA-Z0-9]+/g;
+const variableInJSON = /: *[a-zA-Z]+/g;
 
 function variableInScope(variable: parser.VarContext | undefined, context: Context) {
   if (variable === undefined) throw UNDEFINED_PARSER_CONTEXT;
