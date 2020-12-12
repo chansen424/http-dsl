@@ -1,8 +1,8 @@
 type Value = number | string | Object | null | Array<Value>;
 
-type Context = { [key: string]: Value };
+type ObjectType = { [key: string]: Value };
 
-type ObjectType = Context;
+type Context = ObjectType;
 
 type Headers = { [key: string]: string };
 
