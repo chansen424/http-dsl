@@ -1,4 +1,5 @@
-import fetch, { Headers } from "node-fetch";
+import fetch from "node-fetch";
+import { Headers } from "./types";
 import { removeEnclosing } from "./utils";
 
 async function getRequest(s: string, headers?: Headers): Promise<Object> {
