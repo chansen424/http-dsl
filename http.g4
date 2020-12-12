@@ -4,6 +4,7 @@ toplevel: command EOF;
 
 expression:
 	value
+	| addable PLUS addable
 	| request
 	| input
 	| expression LBRACKET (INT | key | var) RBRACKET;
@@ -36,6 +37,9 @@ FROM: 'from';
 DLEFTARROW: '<<';
 WITH: 'with';
 INPUT: 'input';
+PLUS: '+';
+
+addable: STRING | var;
 
 assign: LET var EQUALS expression;
 
