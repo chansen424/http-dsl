@@ -5,6 +5,7 @@ toplevel: command EOF;
 expression:
 	value
 	| request
+	| input
 	| expression LBRACKET (INT | key | var) RBRACKET;
 
 command:
@@ -34,6 +35,7 @@ TO: 'to';
 FROM: 'from';
 DLEFTARROW: '<<';
 WITH: 'with';
+INPUT: 'input';
 
 assign: LET var EQUALS expression;
 
@@ -45,6 +47,8 @@ delete_field: DEL expression LBRACKET key RBRACKET;
 output: key DLEFTARROW expression;
 
 print: PRINT LPAREN expression RPAREN;
+
+input: INPUT LPAREN RPAREN;
 
 request:
 	GET FROM STRING
