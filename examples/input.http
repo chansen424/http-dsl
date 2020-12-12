@@ -1,2 +1,3 @@
 let i = input();
-print(i)
+let cookie = "cookie" + i;
+print(cookie)
