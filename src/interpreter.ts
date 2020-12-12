@@ -4,7 +4,7 @@ import * as parser from "../generated/httpParser";
 import fs = require("fs");
 
 import { getRequest, postRequest } from './requests';
-import { parseArray, parseJson, removeEnclosing, variableInScope } from "./utils";
+import { parseArray, parseJson, parseHeaders, removeEnclosing, variableInScope } from "./utils";
 import { Value, Context, ObjectType } from "./types";
 import { ILLEGAL_EXTRACTION, ILLEGAL_SET } from "./errors";
 
@@ -70,8 +70,19 @@ async function evaluateExpression(
 ): Promise<Value> {
   if (e.request()) {
     if (e.request()!.GET()) {
+      if (e.request()!.headers()) {
+        return await getRequest(e.request()!.STRING().text,
+          parseHeaders(e.request()!.headers()!.text, context));
+      }
       return await getRequest(e.request()!.STRING().text);
     } else {
+      if (e.request()!.headers()) {
+        return await postRequest(
+          e.request()!.STRING().text,
+          parseJson(e.request()!.json()!.text, context),
+          parseHeaders(e.request()!.headers()!.text, context)
+        );
+      }
       return await postRequest(
         e.request()!.STRING().text,
         parseJson(e.request()!.json()!.text, context)
