@@ -1,10 +1,10 @@
 import { CharStreams, CommonTokenStream } from "antlr4ts";
 import * as lexer from "../generated/httpLexer";
 import * as parser from "../generated/httpParser";
-import fs = require("fs");
+import * as fs from "fs";
 
 import { getRequest, postRequest } from './requests';
-import { parseArray, parseJson, parseHeaders, removeEnclosing, variableInScope } from "./utils";
+import { userInput, parseArray, parseJson, parseHeaders, removeEnclosing, variableInScope } from "./utils";
 import { Value, Context, ObjectType } from "./types";
 import { ILLEGAL_EXTRACTION, ILLEGAL_SET } from "./errors";
 
@@ -88,6 +88,8 @@ async function evaluateExpression(
         parseJson(e.request()!.json()!.text, context)
       );
     }
+  } else if (e.input()) {
+    return userInput();
   } else if (e.value()) {
     return evaluateValue(e.value()!, context);
   } else { // accessing
