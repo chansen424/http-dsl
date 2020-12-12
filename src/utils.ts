@@ -1,7 +1,7 @@
 import * as parser from "../generated/httpParser";
 
-import { VAR_NOT_FOUND, UNDEFINED_PARSER_CONTEXT } from "./errors";
-import { Value, Context } from "./types";
+import { VAR_NOT_FOUND, UNDEFINED_PARSER_CONTEXT, INVALID_HEADER } from "./errors";
+import { Value, Context, ObjectType, Headers } from "./types";
 
 const variableInJSON = /: *[a-zA-Z0-9]+/g;
 
@@ -22,7 +22,7 @@ function isNumeric(s: string): boolean {
   return !isNaN(parseFloat(s));
 }
 
-function parseArray(stringifiedArray: string, context: any): Object {
+function parseArray(stringifiedArray: string, context: Context): Object {
   const elements = removeEnclosing(stringifiedArray).split(/[ ,]+/);
   const result: Map<Number, Value> = new Map();
   elements.forEach((value, index) => {
@@ -43,12 +43,13 @@ function parseArray(stringifiedArray: string, context: any): Object {
   return Array.from(result.values());
 }
 
-function parseJson(stringifiedJson: string, context: any): Object {
+function parseJson(stringifiedJson: string, context: Context, isHeader = false): ObjectType {
   const variablesInserted = stringifiedJson.replace(
     variableInJSON,
     (match: string) => {
       const variable = match.substring(1).trim();
       if (variable in context) {
+        if (isHeader && typeof context[variable] !== "string") throw INVALID_HEADER;
         return typeof context[variable] === "string"
           ? `: "${context[variable]}"`
           : `: ${context[variable]}`;
@@ -60,8 +61,12 @@ function parseJson(stringifiedJson: string, context: any): Object {
   return JSON.parse(variablesInserted);
 }
 
+function parseHeaders(stringifiedHeaders: string, context: Context): Headers {
+  return parseJson(stringifiedHeaders, context, true) as Headers;
+}
+
 function removeEnclosing(s: string): string {
   return s.substr(1, s.length - 2);
 }
 
-export { isNumeric, parseArray, parseJson, removeEnclosing, variableInScope };
+export { isNumeric, parseArray, parseJson, parseHeaders, removeEnclosing, variableInScope };
