@@ -1,13 +1,43 @@
+// Ask user for name
 print("What should I call you?");
 let username = input();
 let greeting = "Hello " + username;
+
+// Checking API permission using Authorization header
+print("Getting api key from local env file...");
+let apiKey = env["rubbishapikey"];
+print("Constructing authorization header...");
+let authHeader = "Bearer " + apiKey;
+print(authHeader);
+print("Checking that you are authorized to use this API...");
+let authRes = GET from "https://http-dsl-test-api.herokuapp.com/protected" with {"Authorization": authHeader};
+print(authRes);
+
+// Set greeting with POST
 print("Setting new greeting...");
 let d = POST {"greeting": greeting} to "https://http-dsl-test-api.herokuapp.com/set-greeting";
 print("POST changed greeting to " + greeting);
-let greetingResponse = GET from "https://http-dsl-test-api.herokuapp.com/greeting";
+
+// GET updated greeting with GET
+let newGreeting = GET from "https://http-dsl-test-api.herokuapp.com/greeting";
 print("GET new greeting from backend...");
-print(greetingResponse);
+print(newGreeting);
+
+// Access endpoint with request cookies
 let userCookie = "user=" + username;
-print("Demonstrating header use via a user cookie...");
+print("GET request using user cookie as header...");
 let cookie = GET from "https://http-dsl-test-api.herokuapp.com/user" with {"Cookie": userCookie};
-print(cookie)
+print(cookie);
+
+// Combine info into one object and rename it
+print("Combining user and greeting into single object...");
+let cookie["greeting"] = newGreeting["data"];
+let finalObj = cookie;
+
+print("=========");
+
+// Use information from api to print message
+let finalUser = finalObj["user"];
+print("You told me that your name was " + finalUser);
+print("So I say...");
+print(finalObj["greeting"])
