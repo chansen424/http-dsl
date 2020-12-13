@@ -1,7 +1,13 @@
-let d = POST {"greeting": "Hello!"} to "https://http-dsl-test-api.herokuapp.com/set-greeting";
-print(d);
-let s = GET from "https://http-dsl-test-api.herokuapp.com/greeting";
-print(s);
-let userCookie = "user=Chris";
+print("What should I call you?");
+let username = input();
+let greeting = "Hello " + username;
+print("Setting new greeting...");
+let d = POST {"greeting": greeting} to "https://http-dsl-test-api.herokuapp.com/set-greeting";
+print("POST changed greeting to " + greeting);
+let greetingResponse = GET from "https://http-dsl-test-api.herokuapp.com/greeting";
+print("GET new greeting from backend...");
+print(greetingResponse);
+let userCookie = "user=" + username;
+print("Demonstrating header use via a user cookie...");
 let cookie = GET from "https://http-dsl-test-api.herokuapp.com/user" with {"Cookie": userCookie};
 print(cookie)
