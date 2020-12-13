@@ -41,6 +41,21 @@ app.get("/names", (_, res) => responseUtil(res, getNames));
 
 app.get("/user", (req, res) => res.send({ user: req.cookies.user }));
 
+app.get("/protected", (req, res) => {
+  if (req.headers.authorization) {
+    const tokens = req.headers.authorization.split(" ");
+    if (tokens[0] === "Bearer" && tokens[1] === "nateisagenius") {
+      res
+        .status(200)
+        .send({ success: true, data: "Hat's off on this semester, Nate!" });
+    } else {
+      res.status(403).send({ error: "Insufficient permissions" });
+    }
+  } else {
+    res.status(403).send({ error: "You are not permitted to use this route." });
+  }
+});
+
 app.post("/set-greeting", (req, res) =>
   responseUtil(res, setGreeting, req.body.greeting)
 );
