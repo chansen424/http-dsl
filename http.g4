@@ -39,7 +39,7 @@ WITH: 'with';
 INPUT: 'input';
 PLUS: '+';
 
-addable: STRING | var;
+addable: STRING | var | INT;
 
 assign: LET var EQUALS expression;
 

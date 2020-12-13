@@ -3,10 +3,17 @@ import * as lexer from "../generated/httpLexer";
 import * as parser from "../generated/httpParser";
 import * as fs from "fs";
 
-import { getRequest, postRequest } from './requests';
-import { userInput, parseArray, parseJson, parseHeaders, removeEnclosing, variableInScope } from "./utils";
+import { getRequest, postRequest } from "./requests";
+import {
+  userInput,
+  parseArray,
+  parseJson,
+  parseHeaders,
+  removeEnclosing,
+  variableInScope,
+} from "./utils";
 import { Value, Context, ObjectType } from "./types";
-import { ILLEGAL_EXTRACTION, ILLEGAL_SET } from "./errors";
+import { ILLEGAL_EXTRACTION, ILLEGAL_SET, ILLEGAL_ADD } from "./errors";
 
 async function evaluateCommand(
   c: parser.CommandContext,
@@ -71,8 +78,10 @@ async function evaluateExpression(
   if (e.request()) {
     if (e.request()!.GET()) {
       if (e.request()!.headers()) {
-        return await getRequest(e.request()!.STRING().text,
-          parseHeaders(e.request()!.headers()!.text, context));
+        return await getRequest(
+          e.request()!.STRING().text,
+          parseHeaders(e.request()!.headers()!.text, context)
+        );
       }
       return await getRequest(e.request()!.STRING().text);
     } else {
@@ -91,10 +100,23 @@ async function evaluateExpression(
   } else if (e.input()) {
     return userInput();
   } else if (e.PLUS()) {
-    return (evaluateValue(e.addable()![0] as parser.ValueContext, context) as string) + (evaluateValue(e.addable()![1] as parser.ValueContext, context) as string);
+    const v1 = evaluateValue(e.addable()![0] as parser.ValueContext, context);
+    const v2 = evaluateValue(e.addable()![1] as parser.ValueContext, context);
+    switch (`${typeof v1}, ${typeof v2}`) {
+      case "number, number": {
+        return (v1 as number) + (v2 as number);
+      }
+      case "string, string": {
+        return (v1 as string) + (v2 as string);
+      }
+      default: {
+        throw ILLEGAL_ADD;
+      }
+    }
   } else if (e.value()) {
     return evaluateValue(e.value()!, context);
-  } else { // accessing
+  } else {
+    // accessing
     const v = await evaluateExpression(e.expression()!, context);
     if (typeof v !== "object") throw ILLEGAL_EXTRACTION;
     if (e.key()) {
@@ -103,14 +125,14 @@ async function evaluateExpression(
     } else if (e.var()) {
       const value = variableInScope(e.var(), context);
       if (Array.isArray(v)) {
-        return v[value as number]
+        return v[value as number];
       } else {
         const obj = v as ObjectType;
         return obj[value as string];
       }
     } else if (e.INT()) {
       const array = v as Array<Value>;
-      return array[parseInt(e.INT()!.text)]
+      return array[parseInt(e.INT()!.text)];
     }
   }
   return null;
@@ -128,7 +150,8 @@ function evaluateValue(t: parser.ValueContext, context: Context): Value {
     return parseJson(t.json()!.text, context);
   } else if (t.array && t.array()) {
     return parseArray(t.array()!.text, context);
-  } else { // this would just be a bunch of tokens, which can be a valid variable, so might as well check
+  } else {
+    // this would just be a bunch of tokens, which can be a valid variable, so might as well check
     return variableInScope(t.var(), context);
   }
 }
@@ -140,7 +163,7 @@ async function interpret(codeString: string) {
   let p = new parser.httpParser(tokenStream);
   let env = fs.readFileSync("./.env", { encoding: "utf8", flag: "r" });
   let lines = env.split("\n");
-  let envvars = {} as { [key: string]: Value };
+  let envvars = {} as ObjectType;
   lines.forEach((line) => {
     const components = line.split("=");
     envvars[components[0]] = components[1];

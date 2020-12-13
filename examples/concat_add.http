@@ -1,0 +1,5 @@
+let strA = "Hello ";
+let strB = "World!";
+print(strA + strB);
+let numone = 1;
+print(2 + numone)
