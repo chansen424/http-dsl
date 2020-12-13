@@ -162,7 +162,7 @@ async function interpret(codeString: string) {
   let tokenStream = new CommonTokenStream(l);
   let p = new parser.httpParser(tokenStream);
   let env = fs.readFileSync("./.env", { encoding: "utf8", flag: "r" });
-  let lines = env.split("\n");
+  let lines = env.split("\r\n");
   let envvars = {} as ObjectType;
   lines.forEach((line) => {
     const components = line.split("=");
