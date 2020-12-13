@@ -1,1 +1,1 @@
-web: ts-node ./api/app.ts
+web: cd api && ts-node ./app.ts

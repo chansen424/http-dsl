@@ -3,5 +3,5 @@ print(d);
 let s = GET from "https://http-dsl-test-api.herokuapp.com/greeting";
 print(s);
 let userCookie = "user=Chris";
-let cookie = GET from "http://localhost:8000/user" with {"Cookie": userCookie};
+let cookie = GET from "https://http-dsl-test-api.herokuapp.com/user" with {"Cookie": userCookie};
 print(cookie)
