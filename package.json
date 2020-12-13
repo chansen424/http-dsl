@@ -8,7 +8,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "nodemon --exec ./node_modules/.bin/ts-node -- ./src/index.ts",
     "http": "./node_modules/.bin/ts-node -- ./src/index.ts",
-    "api": "cd api && ts-node ./app.ts"
+    "api": "cd api && ts-node ./app.ts",
+    "heroku-postbuild": "npm run api"
   },
   "author": "Christopher Hansen and Ansh Godha",
   "license": "GNU General Public License v3",
